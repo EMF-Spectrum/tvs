@@ -1,7 +1,9 @@
-import { Clock } from "@/display/clock";
-import { WIDTH, HEIGHT } from "@/display/constants";
-import { loadFonts } from "@/display/fonts";
+import { Clock } from "./display/clock";
+import { WIDTH, HEIGHT } from "./display/constants";
+import { loadFonts } from "./display/fonts";
 import { join } from "path";
+import { Turn } from "./display/turn";
+import { Phase } from "./display/phase";
 
 function getCtx(): CanvasRenderingContext2D {
 	let canvas = document.getElementById("root") as HTMLCanvasElement;
@@ -81,10 +83,20 @@ async function main(): Promise<void> {
 		Clock(ctx, Math.max(0, TEMPend - now));
 		ctx.restore();
 
-		ctx.strokeStyle = "red";
-		ctx.moveTo(0, HEIGHT / 2);
-		ctx.lineTo(WIDTH, HEIGHT / 2);
-		ctx.stroke();
+		ctx.save();
+		ctx.translate(0, HEIGHT / 2);
+		Turn(ctx, 8);
+		ctx.restore();
+
+		ctx.save();
+		Phase(ctx, "News Phase");
+		ctx.restore();
+
+		// ctx.strokeStyle = "red";
+		// ctx.moveTo(0, HEIGHT / 2);
+		// ctx.lineTo(WIDTH, HEIGHT / 2);
+		// ctx.stroke();
+
 		window.requestAnimationFrame(anime);
 	}
 

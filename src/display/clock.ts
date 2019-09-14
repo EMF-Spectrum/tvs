@@ -1,10 +1,11 @@
-import { WIDTH } from "@/display/constants";
-import { fontify } from "@/display/fonts";
+import { WIDTH } from "./constants";
+import { fontify } from "./fonts";
 
 const DIGIT_SPACING = 0;
 const COLON_VOFFSET = -20;
 const TOTAL_VOFSET = 30; // Random number to fight with the baseline
-const TEXT_SIZE = "250px";
+const TEXT_SIZE = "240px";
+const TEXT_WEIGHT = 900;
 
 /**
  * This could probably be done neater but whatever
@@ -25,7 +26,7 @@ export function Clock(
 	ctx: CanvasRenderingContext2D,
 	display: DOMHighResTimeStamp,
 ): void {
-	ctx.font = fontify(TEXT_SIZE);
+	ctx.font = fontify(TEXT_SIZE, TEXT_WEIGHT);
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
 
@@ -38,8 +39,8 @@ export function Clock(
 	const totalWidth = digitWidth * 6 + colonWidth * 2 + DIGIT_SPACING * 5;
 	const hoffset = (WIDTH - totalWidth + digitWidth) / 2;
 
-	ctx.strokeStyle = "red";
-	ctx.strokeRect(hoffset - digitWidth / 2, -100, totalWidth, 200);
+	// ctx.strokeStyle = "red";
+	// ctx.strokeRect(hoffset - digitWidth / 2, -100, totalWidth, 200);
 	ctx.translate(hoffset, TOTAL_VOFSET);
 
 	let [m, s, ms] = timeBreakdown(display);

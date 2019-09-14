@@ -1,6 +1,6 @@
 const FONT = "Orbitron";
-type OrbitronWeight = 400;
-const EXPECTED_WEIGHTS: OrbitronWeight[] = [400];
+type OrbitronWeight = 400 | 500 | 700 | 900;
+const EXPECTED_WEIGHTS: OrbitronWeight[] = [400, 500, 700, 900];
 
 // WebFont.load
 export function fontify(size: string, weight: OrbitronWeight = 400): string {
@@ -9,10 +9,6 @@ export function fontify(size: string, weight: OrbitronWeight = 400): string {
 
 export function loadFonts(): Promise<void> {
 	return new Promise((resolve, reject): void => {
-		let variants = EXPECTED_WEIGHTS.map(
-			(weight) => `n${Math.floor(weight / 100)}`,
-		).join(",");
-
 		window.WebFont.load({
 			classes: false,
 			active() {
@@ -22,7 +18,7 @@ export function loadFonts(): Promise<void> {
 				reject();
 			},
 			google: {
-				families: [`${FONT}:${variants}`],
+				families: [`${FONT}:${EXPECTED_WEIGHTS.join(",")}`],
 			},
 		});
 	});
