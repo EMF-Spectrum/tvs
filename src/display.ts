@@ -35,6 +35,23 @@ function showLoadingFailure(ctx: CanvasRenderingContext2D, error: Error): void {
 	ctx.fillText("Failed to load :(", WIDTH / 2, HEIGHT / 2, WIDTH);
 }
 
+function fps(ctx: CanvasRenderingContext2D, ft: DOMHighResTimeStamp): void {
+	let fps = 1 / (ft / 1000);
+	let fpsText = `${fps.toFixed(0)}fps`;
+	let ftText = `${ft.toFixed(1)}ms`;
+
+	const padding = 5;
+
+	ctx.save();
+	ctx.font = "10pt Consolas";
+	ctx.textAlign = "right";
+	ctx.textBaseline = "top";
+	ctx.fillStyle = "black";
+	ctx.fillText(fpsText, WIDTH - padding, padding);
+	ctx.fillText(ftText, WIDTH - padding, padding + 13);
+	ctx.restore();
+}
+
 async function main(): Promise<void> {
 	let fontsLoaded = loadFonts();
 
@@ -50,8 +67,14 @@ async function main(): Promise<void> {
 
 	let TEMPend = performance.now() + 20 * 60 * 1000;
 
+	let last = performance.now();
 	function anime(now: DOMHighResTimeStamp): void {
+		let ft = now - last;
+		last = now;
+
 		ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+		fps(ctx, ft);
 
 		ctx.save();
 		ctx.translate(0, HEIGHT / 2);
