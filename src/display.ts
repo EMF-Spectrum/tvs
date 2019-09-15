@@ -84,12 +84,12 @@ async function main(): Promise<void> {
 		ctx.restore();
 
 		ctx.save();
-		ctx.translate(0, HEIGHT / 2);
+		ctx.translate(0, 0);
 		Turn(ctx, 8);
 		ctx.restore();
 
 		ctx.save();
-		Phase(ctx, "News Phase");
+		Phase(ctx, "Diplomacy Phase");
 		ctx.restore();
 
 		// ctx.strokeStyle = "red";

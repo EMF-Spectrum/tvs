@@ -3,8 +3,8 @@ import { fontify } from "./fonts";
 
 const DIGIT_SPACING = 0;
 const COLON_VOFFSET = -20;
-const TOTAL_VOFSET = 30; // Random number to fight with the baseline
-const TEXT_SIZE = "240px";
+const TOTAL_VOFSET = 35; // Random number to fight with the baseline
+const TEXT_SIZE = "300px";
 const TEXT_WEIGHT = 900;
 
 /**
