@@ -1,6 +1,7 @@
 import { WIDTH } from "./constants";
 import { fontify } from "./fonts";
 import { S_IXGRP, SSL_OP_CRYPTOPRO_TLSEXT_BUG } from "constants";
+import { BaseCanvasItem } from "./base";
 
 const TEXT_SIZE = "140px";
 const TEXT_SIZE_BIG = "160px";
@@ -34,12 +35,13 @@ interface StepInfo {
 	tst: TextSizeThing;
 }
 
-export class TerrorTracker {
+export class TerrorTracker extends BaseCanvasItem {
 	private textNormal: TextSizeThing;
 	private textBig: TextSizeThing;
 	public stage: number;
 
 	constructor(ctx: CanvasRenderingContext2D) {
+		super(ctx);
 		this.textNormal = createTextSizeThing(ctx, TEXT_SIZE, 25);
 		this.textBig = createTextSizeThing(ctx, TEXT_SIZE_BIG, 40);
 		this.stage = 1;
@@ -86,7 +88,7 @@ export class TerrorTracker {
 		return step.width;
 	}
 
-	draw(ctx: CanvasRenderingContext2D): void {
+	render(ctx: CanvasRenderingContext2D): void {
 		ctx.textAlign = "center";
 		ctx.textBaseline = "bottom";
 
