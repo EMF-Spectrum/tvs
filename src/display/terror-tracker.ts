@@ -1,5 +1,5 @@
 import { WIDTH } from "./constants";
-import { fontify } from "./fonts";
+import { fontify, OrbitronWeight } from "./fonts";
 import { S_IXGRP, SSL_OP_CRYPTOPRO_TLSEXT_BUG } from "constants";
 import { BaseCanvasItem } from "./base";
 
@@ -17,9 +17,10 @@ interface TextSizeThing {
 function createTextSizeThing(
 	ctx: CanvasRenderingContext2D,
 	fontSize: string,
+	weight: OrbitronWeight,
 	padding: number,
 ): TextSizeThing {
-	let font = fontify(fontSize);
+	let font = fontify(fontSize, weight);
 	ctx.font = font;
 	let width = ctx.measureText("000").width;
 	return {
@@ -33,18 +34,46 @@ interface StepInfo {
 	width: number;
 	text: string;
 	tst: TextSizeThing;
+	fillStyle: string;
+}
+
+function lerp(start: number, end: number, step: number): number {
+	step /= 240;
+	return (1 - step) * start + step * end;
 }
 
 export class TerrorTracker extends BaseCanvasItem {
 	private textNormal: TextSizeThing;
 	private textBig: TextSizeThing;
 	public stage: number;
+	private gradient: CanvasGradient;
 
 	constructor(ctx: CanvasRenderingContext2D) {
 		super(ctx);
-		this.textNormal = createTextSizeThing(ctx, TEXT_SIZE, 25);
-		this.textBig = createTextSizeThing(ctx, TEXT_SIZE_BIG, 40);
+		this.textNormal = createTextSizeThing(ctx, TEXT_SIZE, 400, 25);
+		this.textBig = createTextSizeThing(ctx, TEXT_SIZE_BIG, 700, 40);
 		this.stage = 1;
+		this.gradient = ctx.createLinearGradient(50, 0, WIDTH - 50, 0);
+
+		// this.gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
+		// // this.gradient.addColorStop(0.1, "rgba(255, 255, 255, 0.9)");
+		// this.gradient.addColorStop(0.25, "rgba(255, 255, 255, 0.8)");
+		// this.gradient.addColorStop(0.3333, "rgba(255, 255, 255, 0)");
+		// this.gradient.addColorStop(0.6666, "rgba(255, 255, 255, 0)");
+		// this.gradient.addColorStop(0.75, "rgba(255, 255, 255, 0.8)");
+		// // this.gradient.addColorStop(0.75, "rgba(255, 255, 255, 0.8)");
+		// this.gradient.addColorStop(1, "rgba(255, 255, 255, 0.8)");
+
+		this.gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
+		// this.gradient.addColorStop(0.1, "rgba(255, 255, 255, 0.9)");
+		this.gradient.addColorStop(0.25, "rgba(255, 255, 255, 0)");
+		// this.gradient.addColorStop(0.3333, "rgba(255, 255, 255, 0)");
+		// this.gradient.addColorStop(0.4, "rgba(255, 255, 255, 0)");
+		// this.gradient.addColorStop(0.6, "rgba(255, 255, 255, 0)");
+		this.gradient.addColorStop(0.5, "rgba(255, 255, 255, 0)");
+		// this.gradient.addColorStop(0.6666, "rgba(255, 255, 255, 0)");
+		this.gradient.addColorStop(0.75, "rgba(255, 255, 255, 0)");
+		this.gradient.addColorStop(1, "rgba(255, 255, 255, 1)");
 	}
 
 	getStep(step: number): StepInfo | undefined {
@@ -61,10 +90,12 @@ export class TerrorTracker extends BaseCanvasItem {
 		// let text = "000";
 		let text = step.toString();
 		let width = tst.width + tst.padding * 2;
+		let fillStyle = `rgb(${lerp(150, 255, step)},${lerp(150, 0, step)}, 0)`;
 		return {
 			width,
 			text,
 			tst,
+			fillStyle,
 		};
 	}
 
@@ -84,6 +115,7 @@ export class TerrorTracker extends BaseCanvasItem {
 		centre: number,
 	): number {
 		ctx.font = step.tst.font;
+		ctx.fillStyle = step.fillStyle;
 		ctx.fillText(step.text, centre, 0);
 		return step.width;
 	}
@@ -135,6 +167,9 @@ export class TerrorTracker extends BaseCanvasItem {
 			x -= CURRENT_STEP.width / 2;
 			lastWidth = this.drawStep(ctx, CURRENT_STEP, x);
 		}
+
+		ctx.fillStyle = this.gradient;
+		ctx.fillRect(0, -200, WIDTH, 200);
 
 		ctx.beginPath();
 		ctx.strokeStyle = "black";

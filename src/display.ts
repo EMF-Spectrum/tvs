@@ -69,7 +69,7 @@ async function main(): Promise<void> {
 	}
 
 	let tt = new TerrorTracker(ctx);
-	tt.stage = 99;
+	tt.stage = 199;
 
 	let ticker = new Ticker(ctx);
 
@@ -83,6 +83,8 @@ async function main(): Promise<void> {
 		ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
 		fps(ctx, ft);
+
+		// tt.stage = Math.ceil(now / 100);
 
 		ctx.save();
 		ctx.translate(0, HEIGHT / 2);

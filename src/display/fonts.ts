@@ -1,5 +1,5 @@
 const FONT = "Orbitron";
-type OrbitronWeight = 400 | 500 | 700 | 900;
+export type OrbitronWeight = 400 | 500 | 700 | 900;
 const EXPECTED_WEIGHTS: OrbitronWeight[] = [400, 500, 700, 900];
 
 // WebFont.load
