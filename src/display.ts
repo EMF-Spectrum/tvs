@@ -1,9 +1,9 @@
 import { Clock } from "./display/clock";
-import { WIDTH, HEIGHT } from "./display/constants";
+import { HEIGHT, WIDTH } from "./display/constants";
 import { loadFonts } from "./display/fonts";
-import { join } from "path";
-import { Turn } from "./display/turn";
 import { Phase } from "./display/phase";
+import { TerrorTracker } from "./display/terror-tracker";
+import { Turn } from "./display/turn";
 
 function getCtx(): CanvasRenderingContext2D {
 	let canvas = document.getElementById("root") as HTMLCanvasElement;
@@ -67,6 +67,9 @@ async function main(): Promise<void> {
 		return;
 	}
 
+	let tt = new TerrorTracker(ctx);
+	tt.stage = 99;
+
 	let TEMPend = performance.now() + 20 * 60 * 1000;
 
 	let last = performance.now();
@@ -90,6 +93,13 @@ async function main(): Promise<void> {
 
 		ctx.save();
 		Phase(ctx, "Diplomacy Phase");
+		ctx.restore();
+
+		ctx.save();
+		ctx.translate(0, HEIGHT - 100);
+		// 0, WIDTH - 500);
+		// TerrorTracker(ctx, 201);
+		tt.draw(ctx); //, ft, now);
 		ctx.restore();
 
 		// ctx.strokeStyle = "red";
