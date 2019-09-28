@@ -45,40 +45,35 @@ function lerp(start: number, end: number, step: number): number {
 export class TerrorTracker extends BaseCanvasItem {
 	private textNormal: TextSizeThing;
 	private textBig: TextSizeThing;
-	public stage: number;
 	private gradient: CanvasGradient;
 
 	constructor(ctx: CanvasRenderingContext2D) {
 		super(ctx);
 		this.textNormal = createTextSizeThing(ctx, TEXT_SIZE, 400, 25);
 		this.textBig = createTextSizeThing(ctx, TEXT_SIZE_BIG, 700, 40);
-		this.stage = 1;
 		this.gradient = ctx.createLinearGradient(50, 0, WIDTH - 50, 0);
 
-		// this.gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
-		// // this.gradient.addColorStop(0.1, "rgba(255, 255, 255, 0.9)");
-		// this.gradient.addColorStop(0.25, "rgba(255, 255, 255, 0.8)");
-		// this.gradient.addColorStop(0.3333, "rgba(255, 255, 255, 0)");
-		// this.gradient.addColorStop(0.6666, "rgba(255, 255, 255, 0)");
-		// this.gradient.addColorStop(0.75, "rgba(255, 255, 255, 0.8)");
-		// // this.gradient.addColorStop(0.75, "rgba(255, 255, 255, 0.8)");
-		// this.gradient.addColorStop(1, "rgba(255, 255, 255, 0.8)");
-
 		this.gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
-		// this.gradient.addColorStop(0.1, "rgba(255, 255, 255, 0.9)");
 		this.gradient.addColorStop(0.25, "rgba(255, 255, 255, 0)");
-		// this.gradient.addColorStop(0.3333, "rgba(255, 255, 255, 0)");
-		// this.gradient.addColorStop(0.4, "rgba(255, 255, 255, 0)");
-		// this.gradient.addColorStop(0.6, "rgba(255, 255, 255, 0)");
-		this.gradient.addColorStop(0.5, "rgba(255, 255, 255, 0)");
-		// this.gradient.addColorStop(0.6666, "rgba(255, 255, 255, 0)");
 		this.gradient.addColorStop(0.75, "rgba(255, 255, 255, 0)");
 		this.gradient.addColorStop(1, "rgba(255, 255, 255, 1)");
 	}
 
-	getStep(step: number): StepInfo | undefined {
+	private _stage = 1;
+	get stage(): number {
+		return this._stage;
+	}
+	set stage(stage: number) {
+		if (stage < 0 || stage > 240) {
+			throw new Error("Invalid terror step!");
+		}
+
+		this._stage = stage;
+	}
+
+	private getStep(step: number): StepInfo | undefined {
 		if (step <= 0 || step > 240) {
-			// TODO: GLOBAL PANIC
+			// TODO: "GLOBAL PANIC" final step
 			return undefined;
 		}
 		let tst: TextSizeThing;
@@ -99,7 +94,7 @@ export class TerrorTracker extends BaseCanvasItem {
 		};
 	}
 
-	getDisplayables(): (StepInfo | undefined)[] {
+	private getDisplayables(): (StepInfo | undefined)[] {
 		// Animation will throw this for a loop but whatever
 		const VISIBLES = 3;
 		let ret = [];
@@ -109,7 +104,7 @@ export class TerrorTracker extends BaseCanvasItem {
 		return ret;
 	}
 
-	drawStep(
+	private drawStep(
 		ctx: CanvasRenderingContext2D,
 		step: StepInfo,
 		centre: number,
@@ -120,7 +115,7 @@ export class TerrorTracker extends BaseCanvasItem {
 		return step.width;
 	}
 
-	render(ctx: CanvasRenderingContext2D): void {
+	public render(ctx: CanvasRenderingContext2D): void {
 		ctx.textAlign = "center";
 		ctx.textBaseline = "bottom";
 
@@ -179,40 +174,3 @@ export class TerrorTracker extends BaseCanvasItem {
 		ctx.stroke();
 	}
 }
-/*
-
-function drawStep(
-	ctx: CanvasRenderingContext2D,
-	step: number,
-	centre: number,
-): number {
-	let fontSize = TEXT_SIZE;
-	if (step % 50 == 0) {
-		fontSize = TEXT_SIZE_BIG;
-	}
-	ctx.font = fontify(fontSize, TEXT_WEIGHT);
-
-	let numberWidth = ctx.measureText("000").width;
-
-	ctx.fillText("000", centre, 0);
-	// ctx.fillText(step.toString(), centre, 0);
-
-	return numberWidth + PADDING;
-}
-
-export function TerrorTracker(
-	ctx: CanvasRenderingContext2D,
-	stage: number,
-): void {
-}
-
-	// for (let i = 0; i < 20; i++) {
-	// 	ctx.fillText((i + 1).toFixed(0), numberWidth * i, 0);
-	// }
-
-	// ctx.fillStyle = "red";
-	// ctx.fillText("1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10", WIDTH / 2, 0);
-	// ctx.fillText("Diplomacy Phase", 0, 0);
-}
-
-*/
