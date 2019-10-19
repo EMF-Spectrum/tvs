@@ -62,6 +62,11 @@
     "@types/node" "*"
     "@types/webpack" "*"
 
+"@types/d3-ease@^1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@types/d3-ease/-/d3-ease-1.0.9.tgz#1dd849bd7edef6426e915e220ed9970db5ea4e04"
+  integrity sha512-U5ADevQ+W6fy32FVZZC9EXallcV/Mi12A5Tkd0My5MrC7T8soMQEhlDAg88XUWm0zoCQlB4XV0en/24LvuDB4Q==
+
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#1ee30d79544ca84d68d4b3cdb0af4f205663dd2d"
@@ -1311,6 +1316,11 @@ cyclist@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-1.0.1.tgz#596e9698fd0c80e12038c2b82d6eb1b35b6224d9"
   integrity sha1-WW6WmP0MgOEgOMK4LW6xs1tiJNk=
+
+d3-ease@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/d3-ease/-/d3-ease-1.0.5.tgz#8ce59276d81241b1b72042d6af2d40e76d936ffb"
+  integrity sha512-Ct1O//ly5y5lFM9YTdu+ygq7LleSgSE4oj7vUt9tPLHUi8VCV7QoizGpdWRWAwCO9LdYzIrQDg97+hGVdsSGPQ==
 
 date-now@^0.1.4:
   version "0.1.4"

@@ -1,12 +1,10 @@
 import { WIDTH } from "./constants";
 import { fontify, OrbitronWeight } from "./fonts";
-import { S_IXGRP, SSL_OP_CRYPTOPRO_TLSEXT_BUG } from "constants";
 import { BaseCanvasItem } from "./base";
+import { lerp } from "../utils";
 
 const TEXT_SIZE = "140px";
 const TEXT_SIZE_BIG = "160px";
-const TEXT_WEIGHT = 400;
-const PADDING = 50;
 
 interface TextSizeThing {
 	width: number;
@@ -35,11 +33,6 @@ interface StepInfo {
 	text: string;
 	tst: TextSizeThing;
 	fillStyle: string;
-}
-
-function lerp(start: number, end: number, step: number): number {
-	step /= 240;
-	return (1 - step) * start + step * end;
 }
 
 export class TerrorTracker extends BaseCanvasItem {
@@ -85,7 +78,17 @@ export class TerrorTracker extends BaseCanvasItem {
 		// let text = "000";
 		let text = step.toString();
 		let width = tst.width + tst.padding * 2;
-		let fillStyle = `rgb(${lerp(150, 255, step)},${lerp(150, 0, step)}, 0)`;
+		let lerpStep = step / 240;
+		let fillStyle = `rgb(${
+			// r
+			lerp(150, 255, lerpStep)
+		}, ${
+			// g
+			lerp(150, 0, lerpStep)
+		}, ${
+			//b
+			0
+		})`;
 		return {
 			width,
 			text,
