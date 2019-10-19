@@ -1,21 +1,26 @@
+import { BaseCanvasItem } from "./base";
 import { fontify } from "./fonts";
 
 const PADDING = 30;
 
-export function Turn(ctx: CanvasRenderingContext2D, turn: number): void {
-	ctx.textAlign = "center";
-	ctx.textBaseline = "top";
+export class TurnTracker extends BaseCanvasItem {
+	public turn = 0;
 
-	ctx.translate(PADDING, PADDING);
+	render(ctx: CanvasRenderingContext2D): void {
+		ctx.textAlign = "center";
+		ctx.textBaseline = "top";
 
-	const TURN_BOX = 240;
+		ctx.translate(PADDING, PADDING);
 
-	ctx.strokeStyle = "black";
-	ctx.lineWidth = 10;
-	ctx.strokeRect(0, 0, TURN_BOX, TURN_BOX);
+		const TURN_BOX = 240;
 
-	ctx.font = fontify("72px", 500);
-	ctx.fillText("Turn", TURN_BOX / 2, 20);
-	ctx.font = fontify("150px", 700);
-	ctx.fillText(turn.toFixed(0), TURN_BOX / 2, 95);
+		ctx.strokeStyle = "black";
+		ctx.lineWidth = 10;
+		ctx.strokeRect(0, 0, TURN_BOX, TURN_BOX);
+
+		ctx.font = fontify("72px", 500);
+		ctx.fillText("Turn", TURN_BOX / 2, 20);
+		ctx.font = fontify("150px", 700);
+		ctx.fillText(this.turn.toFixed(0), TURN_BOX / 2, 95);
+	}
 }

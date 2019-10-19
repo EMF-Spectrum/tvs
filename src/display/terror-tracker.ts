@@ -1,7 +1,7 @@
+import { lerp } from "../utils";
+import { BaseCanvasItem } from "./base";
 import { WIDTH } from "./constants";
 import { fontify, OrbitronWeight } from "./fonts";
-import { BaseCanvasItem } from "./base";
-import { lerp } from "../utils";
 
 const TEXT_SIZE = "140px";
 const TEXT_SIZE_BIG = "160px";

@@ -1,10 +1,10 @@
 import { Clock } from "./display/clock";
 import { HEIGHT, WIDTH } from "./display/constants";
 import { loadFonts } from "./display/fonts";
-import { Phase } from "./display/phase";
+import { PhaseTracker } from "./display/phase";
 import { TerrorTracker } from "./display/terror-tracker";
-import { Turn } from "./display/turn";
 import { Ticker } from "./display/ticker";
+import { TurnTracker } from "./display/turn";
 
 function getCtx(): CanvasRenderingContext2D {
 	let canvas = document.getElementById("root") as HTMLCanvasElement;
@@ -68,12 +68,16 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	let tt = new TerrorTracker(ctx);
-	tt.stage = 199;
-
+	let clock = new Clock(ctx);
+	let turnTracker = new TurnTracker(ctx);
+	let phaseTracker = new PhaseTracker(ctx);
+	let terrorTracker = new TerrorTracker(ctx);
 	let ticker = new Ticker(ctx);
 
-	let TEMPend = performance.now() + 20 * 60 * 1000;
+	clock.endTime = performance.now() + 20 * 60 * 1000;
+	turnTracker.turn = 8;
+	phaseTracker.phase = "Diplomacy Phase";
+	terrorTracker.stage = 199;
 
 	let last = performance.now();
 	function anime(now: DOMHighResTimeStamp): void {
@@ -84,33 +88,11 @@ async function main(): Promise<void> {
 
 		fps(ctx, ft);
 
-		// tt.stage = Math.ceil(now / 100);
-
-		ctx.save();
-		ctx.translate(0, HEIGHT / 2);
-		Clock(ctx, Math.max(0, TEMPend - now));
-		ctx.restore();
-
-		ctx.save();
-		ctx.translate(0, 0);
-		Turn(ctx, 8);
-		ctx.restore();
-
-		ctx.save();
-		Phase(ctx, "Diplomacy Phase");
-		ctx.restore();
-
-		ctx.save();
-		ctx.translate(0, HEIGHT - 100);
-		// 0, WIDTH - 500);
-		// TerrorTracker(ctx, 201);
-		tt.render(ctx); //, ft, now);
-		ctx.restore();
-
-		ctx.save();
-		ctx.translate(0, HEIGHT - 100);
-		ticker.render(ctx); //, ft, now);
-		ctx.restore();
+		clock.doRender(ctx, 0, HEIGHT / 2, ft, now);
+		turnTracker.doRender(ctx, 0, 0, ft, now);
+		phaseTracker.doRender(ctx, 0, 0, ft, now);
+		terrorTracker.doRender(ctx, 0, HEIGHT - 100, ft, now);
+		ticker.doRender(ctx, 0, HEIGHT - 100, ft, now);
 
 		// ctx.strokeStyle = "red";
 		// ctx.moveTo(0, HEIGHT / 2);
