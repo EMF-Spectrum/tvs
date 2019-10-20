@@ -5,6 +5,13 @@ import { PhaseTracker } from "./display/phase";
 import { TerrorTracker } from "./display/terror-tracker";
 import { Ticker } from "./display/ticker";
 import { TurnTracker } from "./display/turn";
+import { SpectrumServer } from "./display/server";
+
+declare global {
+	interface Window {
+		spectrumServer: SpectrumServer;
+	}
+}
 
 function getCtx(): CanvasRenderingContext2D {
 	let canvas = document.getElementById("root") as HTMLCanvasElement;
@@ -57,6 +64,8 @@ function fps(ctx: CanvasRenderingContext2D, ft: DOMHighResTimeStamp): void {
 
 async function main(): Promise<void> {
 	let fontsLoaded = loadFonts();
+	let server = new SpectrumServer();
+	window.spectrumServer = server;
 
 	let ctx = getCtx();
 
@@ -74,10 +83,10 @@ async function main(): Promise<void> {
 	let terrorTracker = new TerrorTracker(ctx);
 	let ticker = new Ticker(ctx);
 
-	clock.endTime = performance.now() + 20 * 60 * 1000;
-	turnTracker.turn = 8;
-	phaseTracker.phase = "Diplomacy Phase";
-	terrorTracker.stage = 199;
+	server.on("setClockEnd", (end) => (clock.endTime = end));
+	server.on("setTurn", (turn) => (turnTracker.turn = turn));
+	server.on("setPhase", (phase) => (phaseTracker.phase = phase));
+	server.on("setTerror", (stage) => (terrorTracker.stage = stage));
 
 	let last = performance.now();
 	function anime(now: DOMHighResTimeStamp): void {
@@ -87,6 +96,8 @@ async function main(): Promise<void> {
 		ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
 		fps(ctx, ft);
+
+		server.think(now);
 
 		clock.doRender(ctx, 0, HEIGHT / 2, ft, now);
 		turnTracker.doRender(ctx, 0, 0, ft, now);
@@ -103,5 +114,7 @@ async function main(): Promise<void> {
 	}
 
 	window.requestAnimationFrame(anime);
+
+	server.start(last);
 }
 main();
