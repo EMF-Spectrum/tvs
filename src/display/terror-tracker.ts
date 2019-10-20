@@ -5,6 +5,7 @@ import { fontify, OrbitronWeight } from "./fonts";
 
 const TEXT_SIZE = "140px";
 const TEXT_SIZE_BIG = "160px";
+const MAXIMUM_TERROR = 250;
 
 interface TextSizeThing {
 	width: number;
@@ -38,12 +39,17 @@ interface StepInfo {
 export class TerrorTracker extends BaseCanvasItem {
 	private textNormal: TextSizeThing;
 	private textBig: TextSizeThing;
+	private textPanic: TextSizeThing;
 	private gradient: CanvasGradient;
 
 	constructor(ctx: CanvasRenderingContext2D) {
 		super(ctx);
 		this.textNormal = createTextSizeThing(ctx, TEXT_SIZE, 400, 25);
 		this.textBig = createTextSizeThing(ctx, TEXT_SIZE_BIG, 700, 40);
+
+		this.textPanic = createTextSizeThing(ctx, TEXT_SIZE_BIG, 700, 40);
+		this.textPanic.width = ctx.measureText("PANIC").width;
+
 		this.gradient = ctx.createLinearGradient(50, 0, WIDTH - 50, 0);
 
 		this.gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
@@ -57,7 +63,7 @@ export class TerrorTracker extends BaseCanvasItem {
 		return this._stage;
 	}
 	set stage(stage: number) {
-		if (stage < 0 || stage > 240) {
+		if (stage < 0 || stage > MAXIMUM_TERROR) {
 			throw new Error("Invalid terror step!");
 		}
 
@@ -65,20 +71,26 @@ export class TerrorTracker extends BaseCanvasItem {
 	}
 
 	private getStep(step: number): StepInfo | undefined {
-		if (step <= 0 || step > 240) {
+		if (step <= 0 || step > MAXIMUM_TERROR) {
 			// TODO: "GLOBAL PANIC" final step
 			return undefined;
 		}
 		let tst: TextSizeThing;
-		if (step % 50 == 0) {
+		if (step == MAXIMUM_TERROR) {
+			tst = this.textPanic;
+		} else if (step % 50 == 0) {
 			tst = this.textBig;
 		} else {
 			tst = this.textNormal;
 		}
-		// let text = "000";
+
 		let text = step.toString();
+		if (step == MAXIMUM_TERROR) {
+			text = "PANIC";
+		}
+
 		let width = tst.width + tst.padding * 2;
-		let lerpStep = step / 240;
+		let lerpStep = step / MAXIMUM_TERROR;
 		let fillStyle = `rgb(${
 			// r
 			lerp(150, 255, lerpStep)
