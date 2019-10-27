@@ -1,3 +1,4 @@
+import { TimerStatus } from "../types/data";
 import { BaseCanvasItem } from "./base";
 import { WIDTH } from "./constants";
 import { fontify } from "./fonts";
@@ -24,14 +25,22 @@ function digit(num: number, which: number): string {
 }
 
 export class Clock extends BaseCanvasItem {
-	public endTime: DOMHighResTimeStamp = 0;
+	public status: TimerStatus = { state: "hidden" };
 
 	render(
 		ctx: CanvasRenderingContext2D,
 		ft: DOMHighResTimeStamp,
 		now: DOMHighResTimeStamp,
 	): void {
-		let display = Math.max(0, this.endTime - now);
+		if (this.status.state == "hidden") {
+			return;
+		}
+		let display: number;
+		if (this.status.state == "paused") {
+			display = this.status.timeLeft;
+		} else {
+			display = Math.max(0, this.status.endTime - Date.now());
+		}
 
 		ctx.font = fontify(TEXT_SIZE, TEXT_WEIGHT);
 		ctx.textAlign = "center";
@@ -67,5 +76,13 @@ export class Clock extends BaseCanvasItem {
 		ctx.fillText(digit(ms, 2), x, 0);
 		x += digitPad;
 		ctx.fillText(digit(ms, 1), x, 0);
+
+		if (this.status.state == "paused") {
+			ctx.font = "bold 400px 'Comic Sans MS'";
+			ctx.fillStyle = "hotpink";
+			ctx.translate(WIDTH / 2 - 200, 0);
+			ctx.rotate(0.35389);
+			ctx.fillText("PAuSED! ", 0, 0);
+		}
 	}
 }

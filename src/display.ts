@@ -5,13 +5,7 @@ import { PhaseTracker } from "./display/phase";
 import { TerrorTracker } from "./display/terror-tracker";
 import { Ticker } from "./display/ticker";
 import { TurnTracker } from "./display/turn";
-import { SpectrumServer } from "./display/server";
-
-declare global {
-	interface Window {
-		spectrumServer: SpectrumServer;
-	}
-}
+import { HeartbeatEvent } from "./types/data";
 
 function getCtx(): CanvasRenderingContext2D {
 	let canvas = document.getElementById("root") as HTMLCanvasElement;
@@ -64,14 +58,24 @@ function fps(ctx: CanvasRenderingContext2D, ft: DOMHighResTimeStamp): void {
 
 async function main(): Promise<void> {
 	let fontsLoaded = loadFonts();
-	let server = new SpectrumServer();
-	window.spectrumServer = server;
 
 	let ctx = getCtx();
 
+	let sockURL = new URL("/socket", window.location.href);
+	sockURL.protocol = "ws";
+	let sock = new WebSocket(sockURL.href);
+
+	let socketReady = new Promise((resolve, reject) => {
+		sock.addEventListener("error", reject);
+		sock.addEventListener("open", () => {
+			sock.removeEventListener("error", reject);
+			resolve();
+		});
+	});
+
 	try {
 		showLoading(ctx);
-		await fontsLoaded;
+		await Promise.all([fontsLoaded, socketReady]);
 	} catch (e) {
 		showLoadingFailure(ctx, e);
 		return;
@@ -83,10 +87,17 @@ async function main(): Promise<void> {
 	let terrorTracker = new TerrorTracker(ctx);
 	let ticker = new Ticker(ctx);
 
-	server.on("setClockEnd", (end) => (clock.endTime = end));
-	server.on("setTurn", (turn) => (turnTracker.turn = turn));
-	server.on("setPhase", (phase) => (phaseTracker.phase = phase));
-	server.on("setTerror", (stage) => (terrorTracker.stage = stage));
+	sock.addEventListener("message", (ev) => {
+		let { type, data } = JSON.parse(ev.data);
+		if (type == "heartbeat") {
+			let { phase, terror, timer, turn } = data as HeartbeatEvent;
+			turnTracker.turn = turn;
+			phaseTracker.phase = phase;
+			terrorTracker.stage = terror;
+			clock.status = timer;
+		}
+		console.log(ev.data);
+	});
 
 	let last = performance.now();
 	function anime(now: DOMHighResTimeStamp): void {
@@ -96,8 +107,6 @@ async function main(): Promise<void> {
 		ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
 		fps(ctx, ft);
-
-		server.think(now);
 
 		clock.doRender(ctx, 0, HEIGHT / 2, ft, now);
 		turnTracker.doRender(ctx, 0, 0, ft, now);
@@ -114,7 +123,5 @@ async function main(): Promise<void> {
 	}
 
 	window.requestAnimationFrame(anime);
-
-	server.start(last);
 }
 main();
