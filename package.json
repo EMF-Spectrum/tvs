@@ -1,7 +1,7 @@
 {
   "license": "GPL-3.0",
   "scripts": {
-      "start": "webpack-dev-server"
+    "start": "webpack-dev-server"
   },
   "devDependencies": {
     "@types/copy-webpack-plugin": "^5.0.0",
