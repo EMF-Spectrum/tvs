@@ -34,6 +34,7 @@
     "webpack-dev-server": "^3.8.0"
   },
   "dependencies": {
+    "core-decorators": "^0.20.0",
     "d3-ease": "^1.0.5",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",

@@ -6,6 +6,7 @@ import { TerrorTracker } from "./display/terror-tracker";
 import { Ticker } from "./display/ticker";
 import { TurnTracker } from "./display/turn";
 import { HeartbeatEvent } from "./types/data";
+import { Socket } from "./common/socket";
 
 function getCtx(): CanvasRenderingContext2D {
 	let canvas = document.getElementById("root") as HTMLCanvasElement;
@@ -63,15 +64,9 @@ async function main(): Promise<void> {
 
 	let sockURL = new URL("/socket", window.location.href);
 	sockURL.protocol = "ws";
-	let sock = new WebSocket(sockURL.href);
+	let sock = new Socket(sockURL.href);
 
-	let socketReady = new Promise((resolve, reject) => {
-		sock.addEventListener("error", reject);
-		sock.addEventListener("open", () => {
-			sock.removeEventListener("error", reject);
-			resolve();
-		});
-	});
+	let socketReady = sock.connect();
 
 	try {
 		showLoading(ctx);
@@ -87,16 +82,12 @@ async function main(): Promise<void> {
 	let terrorTracker = new TerrorTracker(ctx);
 	let ticker = new Ticker(ctx);
 
-	sock.addEventListener("message", (ev) => {
-		let { type, data } = JSON.parse(ev.data);
-		if (type == "heartbeat") {
-			let { phase, terror, timer, turn } = data as HeartbeatEvent;
-			turnTracker.turn = turn;
-			phaseTracker.phase = phase;
-			terrorTracker.stage = terror;
-			clock.status = timer;
-		}
-		console.log(ev.data);
+	sock.on("heartbeat", (data) => {
+		let { phase, terror, timer, turn } = data;
+		turnTracker.turn = turn;
+		phaseTracker.phase = phase;
+		terrorTracker.stage = terror;
+		clock.status = timer;
 	});
 
 	let last = performance.now();

@@ -5,6 +5,7 @@ import { HeartbeatEvent } from "./types/data";
 import { TerrorController } from "./admin/terror";
 import { callAPI } from "./admin/api";
 import { SavedGame, TurnTables } from "./admin/turntables";
+import { Socket } from "./common/socket";
 
 function AdminPage() {
 	let [hb, setHB] = useState<HeartbeatEvent | null>(null);
@@ -14,14 +15,11 @@ function AdminPage() {
 	useEffect(() => {
 		let sockURL = new URL("/socket", window.location.href);
 		sockURL.protocol = "ws";
-		let sock = new WebSocket(sockURL.href);
-		sock.addEventListener("message", (ev) => {
-			let { type, data } = JSON.parse(ev.data);
-			if (type == "heartbeat") {
-				setHB(data);
-			} else if (type == "gameOver") {
-				setGameOver(true);
-			} else if (type == "phaseChange" && gameState.current) {
+		let sock = new Socket(sockURL.href);
+		sock.on("heartbeat", (hb) => setHB(hb));
+		sock.on("gameOver", () => setGameOver(true));
+		sock.on("phaseChange", (data) => {
+			if (gameState.current) {
 				gameState.current.currentPhase = data;
 			}
 		});
