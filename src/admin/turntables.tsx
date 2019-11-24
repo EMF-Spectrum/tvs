@@ -68,10 +68,12 @@ function Turn({ turn, currentPhase, phases }: TurnProps) {
 											onClick={() => {
 												let rawData = prompt(
 													"RAW JSON?",
-													`{label:"${
-														phase.label
-													}",length:${phase.length /
-														(60 * 1000)}"}`,
+													JSON.stringify({
+														label: phase.label,
+														length:
+															phase.length /
+															(60 * 1000),
+													}),
 												);
 												if (rawData) {
 													try {
