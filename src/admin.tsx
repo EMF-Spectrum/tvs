@@ -23,6 +23,7 @@ function AdminPage() {
 				gameState.current.currentPhase = data;
 			}
 		});
+		sock.connect();
 
 		callAPI("getSaveGame").then((data) => {
 			gameState.current = data;
