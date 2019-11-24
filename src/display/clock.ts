@@ -3,7 +3,6 @@ import { BaseCanvasItem } from "./base";
 import { WIDTH } from "./constants";
 import { fontify } from "./fonts";
 
-const DIGIT_SPACING = 0;
 const COLON_VOFFSET = -20;
 const TOTAL_VOFSET = 35; // Random number to fight with the baseline
 const TEXT_SIZE = "300px";
@@ -27,6 +26,32 @@ function digit(num: number, which: number): string {
 export class Clock extends BaseCanvasItem {
 	public status: TimerStatus = { state: "hidden" };
 
+	private digitWidth: number;
+	private colonWidth: number;
+	private digitPad: number;
+	private colonPad: number;
+	private withMinWidth: number;
+	private noMinWidth: number;
+
+	private setupText(ctx: CanvasRenderingContext2D): void {
+		ctx.font = fontify(TEXT_SIZE, TEXT_WEIGHT);
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+	}
+
+	constructor(ctx: CanvasRenderingContext2D) {
+		super(ctx);
+
+		this.setupText(ctx);
+
+		this.digitWidth = ctx.measureText("0").width;
+		this.colonWidth = ctx.measureText(":").width;
+		this.digitPad = this.digitWidth;
+		this.colonPad = this.colonWidth / 2 + this.digitWidth / 2;
+		this.noMinWidth = this.digitPad * 2 + this.colonPad * 2;
+		this.withMinWidth = this.digitPad * 3 + this.colonPad * 4;
+	}
+
 	render(
 		ctx: CanvasRenderingContext2D,
 		ft: DOMHighResTimeStamp,
@@ -42,39 +67,37 @@ export class Clock extends BaseCanvasItem {
 			display = Math.max(0, this.status.endTime - Date.now());
 		}
 
-		ctx.font = fontify(TEXT_SIZE, TEXT_WEIGHT);
-		ctx.textAlign = "center";
-		ctx.textBaseline = "middle";
+		this.setupText(ctx);
 
-		const { width: digitWidth } = ctx.measureText("0");
-		const { width: colonWidth } = ctx.measureText(":");
+		let [m, s, ms] = timeBreakdown(display);
 
-		const digitPad = digitWidth + DIGIT_SPACING;
-		const colonPad = colonWidth / 2 + digitWidth / 2 + DIGIT_SPACING;
-
-		const totalWidth = digitWidth * 6 + colonWidth * 2 + DIGIT_SPACING * 5;
-		const hoffset = (WIDTH - totalWidth + digitWidth) / 2;
+		if (m == 0) {
+			ctx.translate((WIDTH - this.noMinWidth) / 2, TOTAL_VOFSET);
+			ctx.fillStyle = "rgb(200, 0, 0)";
+		} else {
+			ctx.translate((WIDTH - this.withMinWidth) / 2, TOTAL_VOFSET);
+		}
 
 		// ctx.strokeStyle = "red";
 		// ctx.strokeRect(hoffset - digitWidth / 2, -100, totalWidth, 200);
-		ctx.translate(hoffset, TOTAL_VOFSET);
 
-		let [m, s, ms] = timeBreakdown(display);
 		let x = 0;
-		ctx.fillText(digit(m, 1), x, 0);
-		x += digitPad;
-		ctx.fillText(digit(m, 0), x, 0);
-		x += colonPad;
-		ctx.fillText(":", x, COLON_VOFFSET);
-		x += colonPad;
+		if (m != 0) {
+			ctx.fillText(digit(m, 1), x, 0);
+			x += this.digitPad;
+			ctx.fillText(digit(m, 0), x, 0);
+			x += this.colonPad;
+			ctx.fillText(":", x, COLON_VOFFSET);
+			x += this.colonPad;
+		}
 		ctx.fillText(digit(s, 1), x, 0);
-		x += digitPad;
+		x += this.digitPad;
 		ctx.fillText(digit(s, 0), x, 0);
-		x += colonPad;
+		x += this.colonPad;
 		ctx.fillText(":", x, COLON_VOFFSET);
-		x += colonPad;
+		x += this.colonPad;
 		ctx.fillText(digit(ms, 2), x, 0);
-		x += digitPad;
+		x += this.digitPad;
 		ctx.fillText(digit(ms, 1), x, 0);
 
 		if (this.status.state == "paused") {
