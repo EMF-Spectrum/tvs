@@ -36,6 +36,25 @@ interface StepInfo {
 	fillStyle: string;
 }
 
+interface Colour {
+	r: number;
+	g: number;
+	b: number;
+}
+
+const COLOUR_1: Colour = { r: 39, g: 194, b: 53 };
+const COLOUR_50: Colour = { r: 215, g: 215, b: 67 };
+const COLOUR_250: Colour = { r: 255, g: 0, b: 0 };
+const COLOUR_200: Colour = { r: 218, g: 68, b: 19 };
+
+function lerpColour(c1: Colour, c2: Colour, amt: number): Colour {
+	return {
+		r: lerp(c1.r, c2.r, amt),
+		b: lerp(c1.b, c2.b, amt),
+		g: lerp(c1.g, c2.g, amt),
+	};
+}
+
 export class TerrorTracker extends BaseCanvasItem {
 	private textNormal: TextSizeThing;
 	private textBig: TextSizeThing;
@@ -46,15 +65,18 @@ export class TerrorTracker extends BaseCanvasItem {
 		super(ctx);
 		this.textNormal = createTextSizeThing(ctx, TEXT_SIZE, 400, 25);
 		this.textBig = createTextSizeThing(ctx, TEXT_SIZE_BIG, 700, 40);
+		// this.textNormal.padding = this.textBig.padding;
+		this.textNormal.width = this.textBig.width;
 
 		this.textPanic = createTextSizeThing(ctx, TEXT_SIZE_BIG, 700, 40);
 		this.textPanic.width = ctx.measureText("PANIC").width;
 
-		this.gradient = ctx.createLinearGradient(50, 0, WIDTH - 50, 0);
+		// this.gradient = ctx.createLinearGradient(50, 0, WIDTH - 50, 0);
+		this.gradient = ctx.createLinearGradient(0, 0, WIDTH, 0);
 
 		this.gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
-		this.gradient.addColorStop(0.25, "rgba(255, 255, 255, 0)");
-		this.gradient.addColorStop(0.75, "rgba(255, 255, 255, 0)");
+		this.gradient.addColorStop(0.15, "rgba(255, 255, 255, 0)");
+		this.gradient.addColorStop(0.85, "rgba(255, 255, 255, 0)");
 		this.gradient.addColorStop(1, "rgba(255, 255, 255, 1)");
 	}
 
@@ -90,17 +112,16 @@ export class TerrorTracker extends BaseCanvasItem {
 		}
 
 		let width = tst.width + tst.padding * 2;
-		let lerpStep = step / MAXIMUM_TERROR;
-		let fillStyle = `rgb(${
-			// r
-			lerp(150, 255, lerpStep)
-		}, ${
-			// g
-			lerp(150, 0, lerpStep)
-		}, ${
-			//b
-			0
-		})`;
+		let target: Colour;
+		if (step < 50) {
+			target = lerpColour(COLOUR_1, COLOUR_50, step / 50);
+		} else if (step < 200) {
+			target = lerpColour(COLOUR_50, COLOUR_200, (step - 50) / 150);
+		} else {
+			target = lerpColour(COLOUR_200, COLOUR_250, (step - 200) / 50);
+		}
+
+		let fillStyle = `rgb(${target.r},${target.g},${target.b})`;
 		return {
 			width,
 			text,
