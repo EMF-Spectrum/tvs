@@ -1,11 +1,12 @@
 import { EventEmitter } from "events";
 import StrictEventEmitter from "strict-event-emitter-types";
-import { HeartbeatEvent, SavedGame } from "../types/data";
+import { HeartbeatEvent, CurrentPhaseData } from "../types/data";
 import { autobind } from "core-decorators";
 
 interface Events {
 	heartbeat: HeartbeatEvent;
-	phaseChange: SavedGame["currentPhase"];
+	phaseChange: CurrentPhaseData;
+	turnChange: string;
 	gameOver: void;
 	disconnected: void;
 	connected: void;

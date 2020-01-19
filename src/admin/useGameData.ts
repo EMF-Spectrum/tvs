@@ -6,6 +6,7 @@ import {
 	SavedGame,
 	TimerStatus,
 	TurnConfig,
+	CurrentPhaseData,
 } from "../types/data";
 import { callAPI } from "./api";
 
@@ -19,7 +20,8 @@ interface Action<T extends string, P> {
 
 type Actions =
 	| Action<"heartbeat", HeartbeatEvent>
-	| Action<"phaseChange", SavedGame["currentPhase"]>
+	| Action<"phaseChange", CurrentPhaseData>
+	| Action<"turnChange", string>
 	| { type: "gameOver" }
 	| Action<"data", SavedGame>;
 
@@ -65,6 +67,8 @@ function savedGameReducer(
 		}
 		case "phaseChange":
 			return { ...state, currentPhase: action.payload };
+		case "turnChange":
+			return { ...state, currentTurn: action.payload };
 		default:
 			throw new Error(`Unknown action ${action["type"]}?`);
 	}
