@@ -1,6 +1,55 @@
 import React from "react";
 import { callAPI } from "./api";
-import { TurnConfig, SavedGame } from "../types/data";
+import { TurnConfig, SavedGame, PhaseConfig } from "../types/data";
+
+interface TurnPhaseProps {
+	phase: PhaseConfig;
+	currentPhase: SavedGame["currentPhase"];
+}
+
+function TurnPhase({ currentPhase, phase }: TurnPhaseProps) {
+	function onClick(): void {
+		let rawData = prompt(
+			"RAW JSON?",
+			JSON.stringify({
+				label: phase.label,
+				length:
+					phase.length != null ? phase.length / (60 * 1000) : "null",
+			}),
+		);
+		if (rawData) {
+			try {
+				let data = JSON.parse(rawData);
+				callAPI("editPhase", {
+					phaseID: phase.id,
+					phaseConfig: data,
+				});
+			} catch (e) {
+				alert(e);
+			}
+		}
+	}
+
+	return (
+		<tr
+			key={phase.id}
+			className={
+				currentPhase && phase.id == currentPhase.id ? "danger" : ""
+			}
+		>
+			<td>{phase.label}</td>
+			<td>
+				<button
+					type="button"
+					className="btn btn-danger"
+					onClick={onClick}
+				>
+					{"edit"}
+				</button>
+			</td>
+		</tr>
+	);
+}
 
 interface TurnProps {
 	turn: TurnConfig;
@@ -14,56 +63,13 @@ function Turn({ turn, currentPhase, phases }: TurnProps) {
 			<td>
 				<table className="table table-striped">
 					<tbody>
-						{turn.phases.map((pid) => {
-							let phase = phases[pid];
-							return (
-								<tr
-									key={pid}
-									className={
-										currentPhase &&
-										phase.id == currentPhase.id
-											? "danger"
-											: ""
-									}
-								>
-									<td>{phase.label}</td>
-									<td>
-										<button
-											type="button"
-											className="btn btn-danger"
-											onClick={() => {
-												let rawData = prompt(
-													"RAW JSON?",
-													JSON.stringify({
-														label: phase.label,
-														length:
-															phase.length != null
-																? phase.length /
-																  (60 * 1000)
-																: "null",
-													}),
-												);
-												if (rawData) {
-													try {
-														let data = JSON.parse(
-															rawData,
-														);
-														callAPI("editPhase", {
-															phaseID: phase.id,
-															phaseConfig: data,
-														});
-													} catch (e) {
-														alert(e);
-													}
-												}
-											}}
-										>
-											edit
-										</button>
-									</td>
-								</tr>
-							);
-						})}
+						{turn.phases.map((pid) => (
+							<TurnPhase
+								key={pid}
+								currentPhase={currentPhase}
+								phase={phases[pid]}
+							/>
+						))}
 					</tbody>
 				</table>
 			</td>
