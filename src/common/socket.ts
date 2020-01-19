@@ -3,7 +3,7 @@ import StrictEventEmitter from "strict-event-emitter-types";
 import { HeartbeatEvent, CurrentPhaseData } from "../types/data";
 import { autobind } from "core-decorators";
 
-interface Events {
+export interface SocketEvents {
 	heartbeat: HeartbeatEvent;
 	phaseChange: CurrentPhaseData;
 	turnChange: string;
@@ -12,7 +12,7 @@ interface Events {
 	connected: void;
 }
 
-type MyEmitter = StrictEventEmitter<EventEmitter, Events>;
+type MyEmitter = StrictEventEmitter<EventEmitter, SocketEvents>;
 
 function asyncSleep(time: number): Promise<void> {
 	return new Promise((r) => window.setTimeout(r, time));

@@ -1,13 +1,6 @@
 import { useEffect, useReducer } from "react";
-import { Socket } from "../common/socket";
-import {
-	HeartbeatEvent,
-	PhaseConfig,
-	SavedGame,
-	TimerStatus,
-	TurnConfig,
-	CurrentPhaseData,
-} from "../types/data";
+import { Socket, SocketEvents } from "../common/socket";
+import { PhaseConfig, SavedGame, TimerStatus, TurnConfig } from "../types/data";
 import { callAPI } from "./api";
 
 export type CurrentTurn = TurnConfig | null;
@@ -18,11 +11,24 @@ interface Action<T extends string, P> {
 	payload: P;
 }
 
+const SOCKET_ACTIONS = [
+	"heartbeat",
+	"phaseChange",
+	"turnChange",
+	"gameOver",
+] as const;
+
+// type SocketAction<T extends keyof SocketEvents> = Action<T, SocketEvents[T]>;
+type SocketAction<T extends typeof SOCKET_ACTIONS[number]> = Action<
+	T,
+	SocketEvents[T]
+>;
+
 type Actions =
-	| Action<"heartbeat", HeartbeatEvent>
-	| Action<"phaseChange", CurrentPhaseData>
-	| Action<"turnChange", string>
-	| { type: "gameOver" }
+	| SocketAction<"heartbeat">
+	| SocketAction<"phaseChange">
+	| SocketAction<"turnChange">
+	| SocketAction<"gameOver">
 	| Action<"data", SavedGame>;
 
 export interface AdminGameData extends Omit<SavedGame, "paused"> {
@@ -81,13 +87,9 @@ export function useGameData() {
 		let sockURL = new URL("/socket", window.location.href);
 		sockURL.protocol = "ws";
 		let sock = new Socket(sockURL.href);
-		sock.on("heartbeat", (hb) =>
-			dispatch({ type: "heartbeat", payload: hb }),
-		);
-		sock.on("gameOver", () => dispatch({ type: "gameOver" }));
-		sock.on("phaseChange", (data) =>
-			dispatch({ type: "phaseChange", payload: data }),
-		);
+		for (let type of SOCKET_ACTIONS) {
+			sock.on(type, (payload) => dispatch({ type, payload } as any));
+		}
 		sock.connect();
 
 		callAPI("getSaveGame").then((data) =>
