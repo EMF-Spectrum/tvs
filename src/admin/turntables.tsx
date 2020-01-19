@@ -1,40 +1,6 @@
 import React from "react";
 import { callAPI } from "./api";
-
-// Duplicated types because it's 2am
-interface PhaseConfig {
-	id: string;
-	label: string;
-	length: number;
-}
-
-interface CurrentPhase {
-	id: string;
-	started: DOMTimeStamp;
-	ends: DOMTimeStamp;
-	length: null | number;
-}
-
-interface TurnConfig {
-	id: string;
-	label: number;
-	phases: string[];
-}
-
-export interface SavedGame {
-	phases: {
-		[id: string]: PhaseConfig;
-	};
-	turns: {
-		[id: string]: TurnConfig;
-	};
-	turnOrder: string[];
-	currentPhase: CurrentPhase | null;
-	currentTurn: string | null;
-	paused: { timeLeft: DOMTimeStamp } | false;
-	terror: number;
-	over: boolean;
-}
+import { TurnConfig, SavedGame } from "../types/data";
 
 interface TurnProps {
 	turn: TurnConfig;
@@ -71,8 +37,10 @@ function Turn({ turn, currentPhase, phases }: TurnProps) {
 													JSON.stringify({
 														label: phase.label,
 														length:
-															phase.length /
-															(60 * 1000),
+															phase.length != null
+																? phase.length /
+																  (60 * 1000)
+																: "null",
 													}),
 												);
 												if (rawData) {

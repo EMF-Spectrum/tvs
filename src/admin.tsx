@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import { HUD } from "./admin/hud";
-import { HeartbeatEvent } from "./types/data";
+import { HeartbeatEvent, SavedGame } from "./types/data";
 import { TerrorController } from "./admin/terror";
 import { callAPI } from "./admin/api";
-import { SavedGame, TurnTables } from "./admin/turntables";
+import { TurnTables } from "./admin/turntables";
 import { Socket } from "./common/socket";
 
 function AdminPage() {

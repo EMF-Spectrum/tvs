@@ -1,8 +1,7 @@
 import { EventEmitter } from "events";
 import StrictEventEmitter from "strict-event-emitter-types";
-import { HeartbeatEvent } from "../types/data";
+import { HeartbeatEvent, SavedGame } from "../types/data";
 import { autobind } from "core-decorators";
-import { SavedGame } from "../admin/turntables";
 
 interface Events {
 	heartbeat: HeartbeatEvent;
