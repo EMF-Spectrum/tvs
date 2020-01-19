@@ -4,7 +4,7 @@ import { TerrorController } from "./terror";
 import { TurnTables } from "./turntables";
 import { useGameData, CurrentTurn, CurrentPhase } from "./useGameData";
 export function AdminPage() {
-	const game = useGameData();
+	const [game, dispatch] = useGameData();
 
 	if (!game) {
 		return <h1>{"Loading!"}</h1>;
@@ -30,7 +30,14 @@ export function AdminPage() {
 			<TerrorController {...{ terror, currentTurn }} />
 			<h1>{"Hi!"}</h1>
 			<TurnTables
-				{...{ currentTurn, turnOrder, currentPhase, turns, phases }}
+				{...{
+					currentPhase,
+					currentTurn,
+					dispatch,
+					phases,
+					turnOrder,
+					turns,
+				}}
 			/>
 			<pre>{JSON.stringify(game, null, 2)}</pre>
 		</>

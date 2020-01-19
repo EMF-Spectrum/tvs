@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { Reducer, useEffect, useReducer } from "react";
 import { Socket, SocketEvents } from "../common/socket";
 import { PhaseConfig, SavedGame, TimerStatus, TurnConfig } from "../types/data";
 import { callAPI } from "./api";
@@ -29,16 +29,18 @@ type Actions =
 	| SocketAction<"phaseChange">
 	| SocketAction<"turnChange">
 	| SocketAction<"gameOver">
+	| Action<"phaseEdit", PhaseConfig>
+	| Action<"turnEdit", TurnConfig>
 	| Action<"data", SavedGame>;
 
 export interface AdminGameData extends Omit<SavedGame, "paused"> {
 	timer: TimerStatus;
 }
 
-function savedGameReducer(
-	state: AdminGameData | null,
-	action: Actions,
-): AdminGameData | null {
+const savedGameReducer: Reducer<
+	AdminGameData | null,
+	Actions
+> = function savedGameReducer(state, action) {
 	if (action.type == "data") {
 		return {
 			...action.payload,
@@ -75,12 +77,34 @@ function savedGameReducer(
 			return { ...state, currentPhase: action.payload };
 		case "turnChange":
 			return { ...state, currentTurn: action.payload };
+		case "phaseEdit":
+			return {
+				...state,
+				phases: {
+					...state.phases,
+					[action.payload.id]: action.payload,
+				},
+			};
+		case "turnEdit":
+			return {
+				...state,
+				turns: {
+					...state.turns,
+					[action.payload.id]: action.payload,
+				},
+			};
 		default:
 			throw new Error(`Unknown action ${action["type"]}?`);
 	}
-}
+};
 
-export function useGameData() {
+export type GameDataDispatch = React.Dispatch<Actions>;
+
+export function useGameData(): [
+	React.ReducerState<typeof savedGameReducer>,
+	GameDataDispatch,
+] {
+	//<typeof savedGameReducer> {
 	const [currentGame, dispatch] = useReducer(savedGameReducer, null);
 
 	useEffect(() => {
@@ -97,5 +121,5 @@ export function useGameData() {
 		);
 	}, []);
 
-	return currentGame;
+	return [currentGame, dispatch];
 }

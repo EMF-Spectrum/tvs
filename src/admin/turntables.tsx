@@ -1,15 +1,21 @@
 import React from "react";
 import { PhaseConfig, SavedGame, TurnConfig } from "../types/data";
 import { callAPI } from "./api";
-import { CurrentPhase, AdminGameData, CurrentTurn } from "./useGameData";
+import {
+	AdminGameData,
+	CurrentPhase,
+	CurrentTurn,
+	GameDataDispatch,
+} from "./useGameData";
 
 interface TurnPhaseProps {
-	phase: PhaseConfig;
 	currentPhase: CurrentPhase;
+	dispatch: GameDataDispatch;
+	phase: PhaseConfig;
 }
 
-function TurnPhase({ currentPhase, phase }: TurnPhaseProps) {
-	function onClick(): void {
+function TurnPhase({ currentPhase, dispatch, phase }: TurnPhaseProps) {
+	async function onClick() {
 		let rawData = prompt(
 			"RAW JSON?",
 			JSON.stringify({
@@ -21,10 +27,11 @@ function TurnPhase({ currentPhase, phase }: TurnPhaseProps) {
 		if (rawData) {
 			try {
 				let data = JSON.parse(rawData);
-				callAPI("editPhase", {
+				let res = await callAPI("editPhase", {
 					phaseID: phase.id,
 					phaseConfig: data,
 				});
+				dispatch({ type: "phaseEdit", payload: res });
 			} catch (e) {
 				alert(e);
 			}
@@ -53,11 +60,12 @@ function TurnPhase({ currentPhase, phase }: TurnPhaseProps) {
 }
 
 interface TurnProps {
-	turn: TurnConfig;
-	phases: SavedGame["phases"];
 	currentPhase: CurrentPhase;
+	dispatch: GameDataDispatch;
+	phases: SavedGame["phases"];
+	turn: TurnConfig;
 }
-function Turn({ turn, currentPhase, phases }: TurnProps) {
+function Turn({ currentPhase, dispatch, phases, turn }: TurnProps) {
 	return (
 		<tr>
 			<th role="rowheading">{turn.label}</th>
@@ -67,8 +75,8 @@ function Turn({ turn, currentPhase, phases }: TurnProps) {
 						{turn.phases.map((pid) => (
 							<TurnPhase
 								key={pid}
-								currentPhase={currentPhase}
 								phase={phases[pid]}
+								{...{ currentPhase, dispatch }}
 							/>
 						))}
 					</tbody>
@@ -79,18 +87,20 @@ function Turn({ turn, currentPhase, phases }: TurnProps) {
 }
 
 interface TTProps {
-	turns: AdminGameData["turns"];
-	phases: AdminGameData["phases"];
 	currentPhase: CurrentPhase;
 	currentTurn: CurrentTurn;
+	dispatch: GameDataDispatch;
+	phases: AdminGameData["phases"];
 	turnOrder: AdminGameData["turnOrder"];
+	turns: AdminGameData["turns"];
 }
 
 export function TurnTables({
-	phases,
-	turns,
 	currentPhase,
+	dispatch,
+	phases,
 	turnOrder,
+	turns,
 }: TTProps) {
 	return (
 		<table className="table">
@@ -99,7 +109,7 @@ export function TurnTables({
 					<Turn
 						key={tid}
 						turn={turns[tid]}
-						{...{ phases, currentPhase }}
+						{...{ currentPhase, dispatch, phases }}
 					/>
 				))}
 			</tbody>
