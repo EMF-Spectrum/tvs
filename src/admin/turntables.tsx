@@ -1,10 +1,11 @@
 import React from "react";
+import { PhaseConfig, SavedGame, TurnConfig } from "../types/data";
 import { callAPI } from "./api";
-import { TurnConfig, SavedGame, PhaseConfig } from "../types/data";
+import { CurrentPhase, AdminGameData, CurrentTurn } from "./useGameData";
 
 interface TurnPhaseProps {
 	phase: PhaseConfig;
-	currentPhase: SavedGame["currentPhase"];
+	currentPhase: CurrentPhase;
 }
 
 function TurnPhase({ currentPhase, phase }: TurnPhaseProps) {
@@ -54,7 +55,7 @@ function TurnPhase({ currentPhase, phase }: TurnPhaseProps) {
 interface TurnProps {
 	turn: TurnConfig;
 	phases: SavedGame["phases"];
-	currentPhase: SavedGame["currentPhase"];
+	currentPhase: CurrentPhase;
 }
 function Turn({ turn, currentPhase, phases }: TurnProps) {
 	return (
@@ -78,22 +79,29 @@ function Turn({ turn, currentPhase, phases }: TurnProps) {
 }
 
 interface TTProps {
-	gameState: React.MutableRefObject<SavedGame | undefined>;
+	turns: AdminGameData["turns"];
+	phases: AdminGameData["phases"];
+	currentPhase: CurrentPhase;
+	currentTurn: CurrentTurn;
+	turnOrder: AdminGameData["turnOrder"];
 }
 
-export function TurnTables({ gameState }: TTProps) {
-	if (!gameState.current) return null;
-	let { turnOrder, phases, currentPhase, turns } = gameState.current;
-
+export function TurnTables({
+	phases,
+	turns,
+	currentPhase,
+	turnOrder,
+}: TTProps) {
 	return (
 		<table className="table">
 			<tbody>
-				{turnOrder.map((tid) => {
-					let turn = turns[tid];
-					return (
-						<Turn key={tid} {...{ turn, phases, currentPhase }} />
-					);
-				})}
+				{turnOrder.map((tid) => (
+					<Turn
+						key={tid}
+						turn={turns[tid]}
+						{...{ phases, currentPhase }}
+					/>
+				))}
 			</tbody>
 		</table>
 	);

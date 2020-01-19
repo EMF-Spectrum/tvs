@@ -1,7 +1,8 @@
 import moment from "moment";
 import React, { useState, useEffect } from "react";
-import { HeartbeatEvent } from "../types/data";
 import { callAPI } from "./api";
+import { TimerStatus } from "../types/data";
+import { CurrentTurn, CurrentPhase } from "./useGameData";
 
 function Moment({ duration }: { duration: number }) {
 	let [durationTXT, setDuration] = useState("");
@@ -17,10 +18,12 @@ function Moment({ duration }: { duration: number }) {
 }
 
 interface HUDProps {
-	hb: HeartbeatEvent;
+	timer: TimerStatus;
+	currentTurn: CurrentTurn;
+	currentPhase: CurrentPhase;
 }
-export function HUD({ hb }: HUDProps) {
-	let showNextTurn = hb.timer.state == "hidden";
+export function HUD({ timer, currentTurn, currentPhase }: HUDProps) {
+	let showNextTurn = timer.state == "hidden";
 
 	return (
 		<div
@@ -39,7 +42,7 @@ export function HUD({ hb }: HUDProps) {
 			>
 				<span style={{ fontSize: "20px" }}>{"Turn"}</span>
 				<span style={{ fontSize: "30px", fontWeight: 700 }}>
-					{hb.turn}
+					{currentTurn && currentTurn.label}
 				</span>
 			</div>
 			<div
@@ -49,24 +52,24 @@ export function HUD({ hb }: HUDProps) {
 					borderRight: "2px solid black",
 				}}
 			>
-				{hb.phase || "Game Setup"}
+				{currentPhase ? currentPhase.label : "Game Setup"}
 			</div>
 			<div
 				style={{
 					fontSize: "48px",
 					padding: "0 30px",
-					color: hb.timer.state == "paused" ? "red" : undefined,
+					color: timer.state == "paused" ? "red" : undefined,
 					marginRight: "30px",
 					borderRight: "2px solid black",
 				}}
 			>
-				{hb.timer.state == "hidden"
+				{timer.state == "hidden"
 					? "No Timer"
 					: moment
 							.duration(
-								hb.timer.state == "paused"
-									? hb.timer.timeLeft
-									: hb.timer.endTime - Date.now(),
+								timer.state == "paused"
+									? timer.timeLeft
+									: timer.endTime - Date.now(),
 							)
 							.humanize()}
 			</div>
@@ -75,28 +78,28 @@ export function HUD({ hb }: HUDProps) {
 					type="button"
 					className="btn btn-success btn-lg"
 					onClick={() => {
-						if (hb!.turn == 0) {
+						if (!currentTurn) {
 							callAPI("startGame");
 						} else {
 							callAPI("advancePhase");
 						}
 					}}
 				>
-					{hb.turn == 0 ? "Start Game" : "Next Turn"}
+					{!currentTurn ? "Start Game" : "Next Turn"}
 				</button>
 			) : (
 				<button
 					type="button"
 					className="btn btn-warning btn-lg"
 					onClick={() => {
-						if (hb.timer.state == "paused") {
+						if (timer.state == "paused") {
 							callAPI("unpause");
 						} else {
 							callAPI("pause");
 						}
 					}}
 				>
-					{hb.timer.state == "paused" ? "unpause" : "pause"}
+					{timer.state == "paused" ? "unpause" : "pause"}
 				</button>
 			)}
 		</div>

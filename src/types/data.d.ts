@@ -51,7 +51,7 @@ export interface PhaseConfig {
 	length: number | null;
 }
 
-export interface CurrentPhase {
+export interface CurrentPhaseData {
 	id: string;
 	started: DOMTimeStamp;
 	ends: DOMTimeStamp;
@@ -72,7 +72,7 @@ export interface SavedGame {
 		[id: string]: TurnConfig;
 	};
 	turnOrder: string[];
-	currentPhase: CurrentPhase | null;
+	currentPhase: CurrentPhaseData | null;
 	currentTurn: string | null;
 	paused: { timeLeft: DOMTimeStamp } | false;
 	terror: number;

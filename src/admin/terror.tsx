@@ -1,12 +1,14 @@
 import React from "react";
-import { HeartbeatEvent } from "../types/data";
 import { callAPI } from "./api";
+import { CurrentTurn } from "./useGameData";
 
 interface TerrorProps {
-	hb: HeartbeatEvent;
+	terror: number;
+	currentTurn: CurrentTurn;
 }
-export function TerrorController({ hb }: TerrorProps) {
-	if (hb.turn == 0) {
+
+export function TerrorController({ terror, currentTurn }: TerrorProps) {
+	if (!currentTurn) {
 		return null;
 	}
 
@@ -14,7 +16,7 @@ export function TerrorController({ hb }: TerrorProps) {
 		<p style={{ marginTop: "1em" }}>
 			<button
 				type="button"
-				disabled={hb.terror == 1}
+				disabled={terror == 1}
 				className="btn btn-default btn-lg"
 				onClick={() => callAPI("addTerror", { amount: -1 })}
 			>
@@ -22,7 +24,7 @@ export function TerrorController({ hb }: TerrorProps) {
 			</button>{" "}
 			<button type="button" disabled className="btn btn-default btn-lg">
 				{"Terror Tracker: "}
-				{hb.terror}
+				{terror}
 			</button>{" "}
 			<button
 				type="button"
@@ -67,7 +69,7 @@ export function TerrorController({ hb }: TerrorProps) {
 				type="button"
 				className="btn btn-danger btn-lg"
 				onClick={() => {
-					let amount = Math.floor((250 - hb.terror) / 2);
+					let amount = Math.floor((250 - terror) / 2);
 					if (amount > 0) {
 						callAPI("addTerror", { amount });
 					}
