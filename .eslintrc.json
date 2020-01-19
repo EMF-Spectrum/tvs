@@ -1,14 +1,11 @@
 {
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": [
-            "./tsconfig.json",
-            "./jsconfig.webpack.json"
-        ],
+        "project": ["./tsconfig.json", "./jsconfig.webpack.json"],
         "ecmaVersion": 2019,
         "sourceType": "module",
         "ecmaFeatures": {
-			"jsx": true
+            "jsx": true
         }
     },
     "plugins": ["@typescript-eslint", "react", "prettier"],
@@ -26,6 +23,11 @@
     },
     "rules": {
         "prefer-const": "off",
-        "react/jsx-no-literals": "warn"
+        "react/jsx-no-literals": "warn",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-unused-vars": [
+            "warn",
+            { "argsIgnorePattern": "^_" }
+        ]
     }
 }

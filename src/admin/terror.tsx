@@ -18,17 +18,18 @@ export function TerrorController({ hb }: TerrorProps) {
 				className="btn btn-default btn-lg"
 				onClick={() => callAPI("addTerror", { amount: -1 })}
 			>
-				-
+				{"-"}
 			</button>{" "}
 			<button type="button" disabled className="btn btn-default btn-lg">
-				Terror Tracker: {hb.terror}
+				{"Terror Tracker: "}
+				{hb.terror}
 			</button>{" "}
 			<button
 				type="button"
 				className="btn btn-default btn-lg"
 				onClick={() => callAPI("addTerror", { amount: 1 })}
 			>
-				+
+				{"+"}
 			</button>
 			<span
 				style={{
@@ -48,7 +49,7 @@ export function TerrorController({ hb }: TerrorProps) {
 					}
 				}}
 			>
-				Add Terror
+				{"Add Terror"}
 			</button>{" "}
 			<button
 				type="button"
@@ -60,7 +61,7 @@ export function TerrorController({ hb }: TerrorProps) {
 					}
 				}}
 			>
-				Set Terror
+				{"Set Terror"}
 			</button>{" "}
 			<button
 				type="button"
@@ -72,7 +73,7 @@ export function TerrorController({ hb }: TerrorProps) {
 					}
 				}}
 			>
-				Reveal Aliens
+				{"Reveal Aliens"}
 			</button>
 		</p>
 	);

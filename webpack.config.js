@@ -1,11 +1,10 @@
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-/** @type webpack.Configuration */
+/** @type import("webpack").Configuration */
 module.exports = {
 	entry: {
 		display: "./src/display.ts",

@@ -31,9 +31,9 @@ function AdminPage() {
 	}, []);
 
 	if (!hb || !gameState.current) {
-		return <h1>Loading!</h1>;
+		return <h1>{"Loading!"}</h1>;
 	} else if (gameOver) {
-		return <h1>Game's over everyone, time to go home!</h1>;
+		return <h1>{"Game's over everyone, time to go home!"}</h1>;
 	}
 
 	let game = gameState.current;
