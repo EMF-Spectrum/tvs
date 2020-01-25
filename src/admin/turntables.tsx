@@ -98,13 +98,25 @@ function EditableTurnPhase({
 				/>
 			</td>
 			<td>
-				<form id={formID} onSubmit={onSubmit}>
+				<form
+					id={formID}
+					onSubmit={onSubmit}
+					style={{ display: "flex", justifyContent: "space-between" }}
+				>
 					<button
 						className="btn btn-primary"
 						disabled={isSaving}
 						type="submit"
 					>
 						{"Save"}
+					</button>
+					<button
+						className="btn btn-link"
+						disabled={isSaving}
+						type="button"
+						onClick={stopEditing}
+					>
+						{"Cancel"}
 					</button>
 				</form>
 			</td>
@@ -119,7 +131,7 @@ function TurnPhase(props: TurnPhaseProps) {
 			<EditableTurnPhase {...props} stopEditing={() => setEdit(false)} />
 		);
 	}
-	const { isCurrent, phase } = props;
+	const { isCurrent, phase, dispatch } = props;
 
 	return (
 		<tr className={isCurrent ? "success" : ""}>
@@ -158,7 +170,13 @@ function TurnPhase(props: TurnPhaseProps) {
 					<button
 						type="button"
 						className="btn btn-default"
-						onClick={() => {}}
+						onClick={async () => {
+							let res = await callAPI("bumpPhase", {
+								phaseID: phase.id,
+								direction: "up",
+							});
+							dispatch({ type: "turnEdit", payload: res });
+						}}
 						title="Move up"
 					>
 						<Icon name="chevron-up" />
@@ -166,7 +184,13 @@ function TurnPhase(props: TurnPhaseProps) {
 					<button
 						type="button"
 						className="btn btn-default"
-						onClick={() => {}}
+						onClick={async () => {
+							let res = await callAPI("bumpPhase", {
+								phaseID: phase.id,
+								direction: "down",
+							});
+							dispatch({ type: "turnEdit", payload: res });
+						}}
 						title="Move down"
 					>
 						<Icon name="chevron-down" />
@@ -187,10 +211,34 @@ function Turn({ currentPhase, dispatch, phases, turn }: TurnProps) {
 	return (
 		<tbody>
 			<tr className="info">
-				<th scope="rowgroup" colSpan={3}>
+				<th
+					scope="rowgroup"
+					colSpan={2}
+					style={{ position: "sticky", top: 0 }}
+				>
 					{"Turn "}
 					{turn.label}
 				</th>
+				<td style={{ position: "sticky", top: 0, zIndex: 2 }}>
+					<button
+						className="btn btn-default btn-block btn-xs"
+						type="button"
+						onClick={async () => {
+							let label = prompt("Name?");
+							if (!label) {
+								return;
+							}
+							let res = await callAPI("newPhase", {
+								turnID: turn.id,
+								phaseConfig: { label, length: null },
+							});
+							dispatch({ type: "phaseEdit", payload: res.phase });
+							dispatch({ type: "turnEdit", payload: res.turn });
+						}}
+					>
+						{"Add Phase"}
+					</button>
+				</td>
 			</tr>
 			{turn.phases.map((pid) => (
 				<TurnPhase
@@ -221,19 +269,35 @@ export function TurnTables({
 	turns,
 }: TTProps) {
 	return (
-		<table className="table table-striped">
-			<colgroup>
-				<col width="40%"></col>
-				<col width="40%"></col>
-				<col width="15%"></col>
-			</colgroup>
-			{turnOrder.map((tid) => (
-				<Turn
-					key={tid}
-					turn={turns[tid]}
-					{...{ currentPhase, dispatch, phases }}
-				/>
-			))}
-		</table>
+		<>
+			<table className="table table-striped">
+				<colgroup>
+					<col width="40%"></col>
+					<col width="40%"></col>
+					<col width="15%"></col>
+				</colgroup>
+				{turnOrder.map((tid) => (
+					<Turn
+						key={tid}
+						turn={turns[tid]}
+						{...{ currentPhase, dispatch, phases }}
+					/>
+				))}
+			</table>
+			<div style={{ marginBottom: "2em" }}>
+				<button
+					type="button"
+					className="btn btn-default btn-lg btn-block"
+					onClick={async () => {
+						await callAPI("newTurn");
+						// least effort method of adding the new turn
+						let res = await callAPI("getSaveGame");
+						dispatch({ type: "data", payload: res });
+					}}
+				>
+					{"Add Turn"}
+				</button>
+			</div>
+		</>
 	);
 }
