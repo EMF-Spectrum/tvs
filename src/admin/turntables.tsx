@@ -1,4 +1,5 @@
-import React from "react";
+import moment from "moment";
+import React, { useState, useRef } from "react";
 import { PhaseConfig, SavedGame, TurnConfig } from "../types/data";
 import { callAPI } from "./api";
 import {
@@ -9,50 +10,132 @@ import {
 } from "./useGameData";
 
 interface TurnPhaseProps {
-	currentPhase: CurrentPhase;
 	dispatch: GameDataDispatch;
+	isCurrent: boolean;
 	phase: PhaseConfig;
 }
 
-function TurnPhase({ currentPhase, dispatch, phase }: TurnPhaseProps) {
-	async function onClick() {
-		let rawData = prompt(
-			"RAW JSON?",
-			JSON.stringify({
-				label: phase.label,
-				length:
-					phase.length != null ? phase.length / (60 * 1000) : "null",
-			}),
-		);
-		if (rawData) {
-			try {
-				let data = JSON.parse(rawData);
-				let res = await callAPI("editPhase", {
-					phaseID: phase.id,
-					phaseConfig: data,
-				});
-				dispatch({ type: "phaseEdit", payload: res });
-			} catch (e) {
-				alert(e);
+interface EditTurnProps extends TurnPhaseProps {
+	stopEditing: () => void;
+}
+
+function EditableTurnPhase({
+	dispatch,
+	isCurrent,
+	phase,
+	stopEditing,
+}: EditTurnProps) {
+	const [isSaving, setSaving] = useState(false);
+	const labelRef = useRef<HTMLInputElement>(null);
+	const lengthRef = useRef<HTMLInputElement>(null);
+
+	async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+		if (
+			!labelRef.current ||
+			!lengthRef.current ||
+			!labelRef.current.validity.valid ||
+			!lengthRef.current.validity.valid
+		) {
+			return;
+		}
+		let label = labelRef.current.value;
+		let length = lengthRef.current.valueAsNumber;
+		length = moment.duration(length, "minutes").asMilliseconds();
+
+		try {
+			setSaving(true);
+			let phaseConfig: PhaseConfig = {
+				...phase,
+				label,
+				length,
+			};
+			// RIP anyone who wanted a 0 minute round
+			if (phaseConfig.length == 0) {
+				phaseConfig.length = null;
 			}
+
+			let res = await callAPI("editPhase", {
+				phaseID: phase.id,
+				phaseConfig,
+			});
+			dispatch({ type: "phaseEdit", payload: res });
+			stopEditing();
+		} catch (e) {
+			alert(e);
 		}
 	}
 
+	const formID = "edit-" + phase.id;
+
 	return (
-		<tr
-			key={phase.id}
-			className={
-				currentPhase && phase.id == currentPhase.id ? "danger" : ""
-			}
-		>
-			<td>{phase.label}</td>
+		<tr className={isCurrent ? "danger" : "warning"}>
+			<th scope="row" style={{ textIndent: "2em", fontWeight: "normal" }}>
+				<input
+					disabled={isSaving}
+					form={formID}
+					defaultValue={phase.label}
+					ref={labelRef}
+				/>
+			</th>
+			<td>
+				<input
+					defaultValue={moment
+						.duration(phase.length || 0, "milliseconds")
+						.asMinutes()}
+					disabled={isSaving}
+					form={formID}
+					min={0}
+					step={0.01}
+					ref={lengthRef}
+					type="number"
+				/>
+			</td>
+			<td>
+				<form id={formID} onSubmit={onSubmit}>
+					<button
+						className="btn btn-primary"
+						disabled={isSaving}
+						type="submit"
+						style={{ width: "5em" }}
+					>
+						{"Save"}
+					</button>
+				</form>
+			</td>
+		</tr>
+	);
+}
+
+function TurnPhase(props: TurnPhaseProps) {
+	const [isEdit, setEdit] = useState(false);
+	if (isEdit) {
+		return (
+			<EditableTurnPhase {...props} stopEditing={() => setEdit(false)} />
+		);
+	}
+	const { isCurrent, phase } = props;
+
+	return (
+		<tr className={isCurrent ? "success" : ""}>
+			<th scope="row" style={{ textIndent: "2em", fontWeight: "normal" }}>
+				{phase.label}
+			</th>
+			<td>
+				{phase.length != null
+					? moment
+							.duration(phase.length || Infinity, "milliseconds")
+							.asMinutes() + " Minutes"
+					: "-"}
+			</td>
 			<td>
 				<button
 					type="button"
-					className="btn btn-danger"
-					onClick={onClick}
+					className="btn btn-primary"
+					onClick={() => setEdit(true)}
+					style={{ width: "5em" }}
 				>
-					{"edit"}
+					{"Edit"}
 				</button>
 			</td>
 		</tr>
@@ -67,22 +150,22 @@ interface TurnProps {
 }
 function Turn({ currentPhase, dispatch, phases, turn }: TurnProps) {
 	return (
-		<tr>
-			<th role="rowheading">{turn.label}</th>
-			<td>
-				<table className="table table-striped">
-					<tbody>
-						{turn.phases.map((pid) => (
-							<TurnPhase
-								key={pid}
-								phase={phases[pid]}
-								{...{ currentPhase, dispatch }}
-							/>
-						))}
-					</tbody>
-				</table>
-			</td>
-		</tr>
+		<tbody>
+			<tr className="info">
+				<th scope="rowgroup" colSpan={3}>
+					{"Turn "}
+					{turn.label}
+				</th>
+			</tr>
+			{turn.phases.map((pid) => (
+				<TurnPhase
+					key={pid}
+					dispatch={dispatch}
+					isCurrent={currentPhase ? currentPhase.id == pid : false}
+					phase={phases[pid]}
+				/>
+			))}
+		</tbody>
 	);
 }
 
@@ -103,16 +186,21 @@ export function TurnTables({
 	turns,
 }: TTProps) {
 	return (
-		<table className="table">
-			<tbody>
-				{turnOrder.map((tid) => (
-					<Turn
-						key={tid}
-						turn={turns[tid]}
-						{...{ currentPhase, dispatch, phases }}
-					/>
-				))}
-			</tbody>
+		<table className="table table-striped">
+			<thead>
+				<tr>
+					<th style={{ width: "50%" }}></th>
+					<th style={{ width: "50%" }}></th>
+					<th style={{ width: "1%" }}></th>
+				</tr>
+			</thead>
+			{turnOrder.map((tid) => (
+				<Turn
+					key={tid}
+					turn={turns[tid]}
+					{...{ currentPhase, dispatch, phases }}
+				/>
+			))}
 		</table>
 	);
 }

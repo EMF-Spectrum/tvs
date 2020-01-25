@@ -28,7 +28,6 @@ export function AdminPage() {
 		<>
 			<HUD {...{ timer, currentPhase, currentTurn }} />
 			<TerrorController {...{ terror, currentTurn }} />
-			<h1>{"Hi!"}</h1>
 			<TurnTables
 				{...{
 					currentPhase,
