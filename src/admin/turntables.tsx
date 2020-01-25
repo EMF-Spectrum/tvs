@@ -9,6 +9,12 @@ import {
 	GameDataDispatch,
 } from "./useGameData";
 
+function Icon({ name }: { name: string }) {
+	return (
+		<span className={`glyphicon glyphicon-${name}`} aria-hidden="true" />
+	);
+}
+
 interface TurnPhaseProps {
 	dispatch: GameDataDispatch;
 	isCurrent: boolean;
@@ -97,7 +103,6 @@ function EditableTurnPhase({
 						className="btn btn-primary"
 						disabled={isSaving}
 						type="submit"
-						style={{ width: "5em" }}
 					>
 						{"Save"}
 					</button>
@@ -129,14 +134,44 @@ function TurnPhase(props: TurnPhaseProps) {
 					: "-"}
 			</td>
 			<td>
-				<button
-					type="button"
-					className="btn btn-primary"
-					onClick={() => setEdit(true)}
-					style={{ width: "5em" }}
-				>
-					{"Edit"}
-				</button>
+				<div className="btn-group">
+					<button
+						type="button"
+						className="btn btn-primary"
+						onClick={() => setEdit(true)}
+						title="Edit"
+					>
+						<Icon name="edit" />
+					</button>
+					<button
+						type="button"
+						className="btn btn-danger"
+						onClick={() => {
+							callAPI("setPhase", {
+								phaseID: phase.id,
+							}).catch((e) => alert(e));
+						}}
+						title={isCurrent ? "Restart" : "Jump here"}
+					>
+						<Icon name={isCurrent ? "refresh" : "play-circle"} />
+					</button>
+					<button
+						type="button"
+						className="btn btn-default"
+						onClick={() => {}}
+						title="Move up"
+					>
+						<Icon name="chevron-up" />
+					</button>
+					<button
+						type="button"
+						className="btn btn-default"
+						onClick={() => {}}
+						title="Move down"
+					>
+						<Icon name="chevron-down" />
+					</button>
+				</div>
 			</td>
 		</tr>
 	);
@@ -187,13 +222,11 @@ export function TurnTables({
 }: TTProps) {
 	return (
 		<table className="table table-striped">
-			<thead>
-				<tr>
-					<th style={{ width: "50%" }}></th>
-					<th style={{ width: "50%" }}></th>
-					<th style={{ width: "1%" }}></th>
-				</tr>
-			</thead>
+			<colgroup>
+				<col width="40%"></col>
+				<col width="40%"></col>
+				<col width="15%"></col>
+			</colgroup>
 			{turnOrder.map((tid) => (
 				<Turn
 					key={tid}
