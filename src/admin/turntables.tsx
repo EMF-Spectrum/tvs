@@ -49,18 +49,18 @@ function EditableTurnPhase({
 		let length = lengthRef.current.valueAsNumber;
 		length = moment.duration(length, "minutes").asMilliseconds();
 
-		try {
-			setSaving(true);
-			let phaseConfig: PhaseConfig = {
-				...phase,
-				label,
-				length,
-			};
-			// RIP anyone who wanted a 0 minute round
-			if (phaseConfig.length == 0) {
-				phaseConfig.length = null;
-			}
+		setSaving(true);
+		let phaseConfig: PhaseConfig = {
+			...phase,
+			label,
+			length,
+		};
+		// RIP anyone who wanted a 0 minute round
+		if (phaseConfig.length == 0) {
+			phaseConfig.length = null;
+		}
 
+		try {
 			let res = await callAPI("editPhase", {
 				phaseID: phase.id,
 				phaseConfig,
@@ -68,7 +68,7 @@ function EditableTurnPhase({
 			dispatch({ type: "phaseEdit", payload: res });
 			stopEditing();
 		} catch (e) {
-			alert(e);
+			setSaving(false);
 		}
 	}
 
@@ -149,7 +149,7 @@ function TurnPhase(props: TurnPhaseProps) {
 						onClick={() => {
 							callAPI("setPhase", {
 								phaseID: phase.id,
-							}).catch((e) => alert(e));
+							});
 						}}
 						title={isCurrent ? "Restart" : "Jump here"}
 					>
