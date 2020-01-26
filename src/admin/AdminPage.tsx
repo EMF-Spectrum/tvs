@@ -38,7 +38,6 @@ export function AdminPage() {
 					turns,
 				}}
 			/>
-			<pre>{JSON.stringify(game, null, 2)}</pre>
 		</>
 	);
 }

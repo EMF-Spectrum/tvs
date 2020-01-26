@@ -8,15 +8,11 @@ interface TerrorProps {
 }
 
 export function TerrorController({ terror, currentTurn }: TerrorProps) {
-	if (!currentTurn) {
-		return null;
-	}
-
 	return (
 		<p style={{ marginTop: "1em" }}>
 			<button
 				type="button"
-				disabled={terror == 1}
+				disabled={!currentTurn || terror == 1}
 				className="btn btn-default btn-lg"
 				onClick={() => callAPI("addTerror", { amount: -1 })}
 			>
@@ -29,6 +25,7 @@ export function TerrorController({ terror, currentTurn }: TerrorProps) {
 			<button
 				type="button"
 				className="btn btn-default btn-lg"
+				disabled={!currentTurn}
 				onClick={() => callAPI("addTerror", { amount: 1 })}
 			>
 				{"+"}
@@ -44,6 +41,7 @@ export function TerrorController({ terror, currentTurn }: TerrorProps) {
 			<button
 				type="button"
 				className="btn btn-default btn-lg"
+				disabled={!currentTurn}
 				onClick={() => {
 					let amount = parseInt(prompt("How much terror?") || "");
 					if (amount) {
@@ -56,6 +54,7 @@ export function TerrorController({ terror, currentTurn }: TerrorProps) {
 			<button
 				type="button"
 				className="btn btn-default btn-lg"
+				disabled={!currentTurn}
 				onClick={() => {
 					let amount = parseInt(prompt("How much terror?") || "");
 					if (amount) {
@@ -68,6 +67,7 @@ export function TerrorController({ terror, currentTurn }: TerrorProps) {
 			<button
 				type="button"
 				className="btn btn-danger btn-lg"
+				disabled={!currentTurn}
 				onClick={() => {
 					let amount = Math.floor((250 - terror) / 2);
 					if (amount > 0) {
