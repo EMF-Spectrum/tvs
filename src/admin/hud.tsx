@@ -1,9 +1,10 @@
 import moment from "moment";
-import React, { useState, useEffect } from "react";
-import { callAPI } from "./api";
+import React, { useEffect, useState } from "react";
 import { TimerStatus } from "../types/data";
-import { CurrentTurn, CurrentPhase } from "./useGameData";
-import { time } from "core-decorators";
+import { callAPI } from "./api";
+import "./hud.scss";
+import { CurrentPhase, CurrentTurn } from "./useGameData";
+import classNames from "classnames";
 
 function getTimerStr(duration: number) {
 	let d = moment.duration(duration);
@@ -50,53 +51,25 @@ export function HUD({ timer, currentTurn, currentPhase }: HUDProps) {
 	let showNextTurn = timer.state == "hidden";
 
 	return (
-		<div
-			style={{
-				display: "flex",
-			}}
-		>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					textAlign: "center",
-					padding: "0 30px",
-					borderRight: "2px solid black",
-				}}
-			>
-				<span style={{ fontSize: "20px" }}>{"Turn"}</span>
-				<span style={{ fontSize: "30px", fontWeight: 700 }}>
-					{currentTurn && currentTurn.label}
-				</span>
+		<div className="admin-hud">
+			<div className="turn turn-display">
+				<span className="text">{"Turn"}</span>
+				<span className="turn">{currentTurn && currentTurn.label}</span>
 			</div>
-			<div
-				style={{
-					fontSize: "48px",
-					padding: "0 30px",
-					borderRight: "2px solid black",
-					flexGrow: 1,
-				}}
-			>
+			<div className="phase">
 				{currentPhase ? currentPhase.label : "Game Setup"}
 			</div>
 			<div
-				style={{
-					fontSize: "48px",
-					padding: "0 30px",
-					color: timer.state == "paused" ? "red" : undefined,
-					marginRight: "30px",
-					borderRight: "2px solid black",
-					flexBasis: "4.3em",
-					textAlign: "center",
-					fontFamily: "Roboto Mono",
-				}}
+				className={classNames("timer", {
+					"-paused": timer.state == "paused",
+				})}
 			>
 				<Timer timer={timer} />
 			</div>
 			{showNextTurn ? (
 				<button
 					type="button"
-					className="btn btn-success btn-lg"
+					className="btn btn-success btn-lg control"
 					onClick={() => {
 						if (!currentTurn) {
 							callAPI("startGame");
@@ -104,14 +77,13 @@ export function HUD({ timer, currentTurn, currentPhase }: HUDProps) {
 							callAPI("advancePhase");
 						}
 					}}
-					style={{ width: "10em" }}
 				>
 					{!currentTurn ? "Start Game" : "Next"}
 				</button>
 			) : (
 				<button
 					type="button"
-					className="btn btn-warning btn-lg"
+					className="btn btn-warning btn-lg control"
 					onClick={() => {
 						if (timer.state == "paused") {
 							callAPI("unpause");
@@ -119,7 +91,6 @@ export function HUD({ timer, currentTurn, currentPhase }: HUDProps) {
 							callAPI("pause");
 						}
 					}}
-					style={{ width: "10em" }}
 				>
 					{timer.state == "paused" ? "Resume" : "Pause"}
 				</button>

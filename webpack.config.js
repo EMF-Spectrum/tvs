@@ -17,6 +17,23 @@ module.exports = {
 				use: "ts-loader",
 				exclude: /node_modules/,
 			},
+			{
+				test: /\.scss$/,
+				use: [
+					{
+						loader: "style-loader",
+						options: { esModule: true },
+					},
+					{
+						loader: "css-loader",
+						options: { sourceMap: true, esModule: true },
+					},
+					{
+						loader: "sass-loader",
+						options: { sourceMap: true },
+					},
+				],
+			},
 		],
 	},
 	resolve: {

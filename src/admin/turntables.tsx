@@ -1,7 +1,9 @@
+import classNames from "classnames";
 import moment from "moment";
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import { PhaseConfig, SavedGame, TurnConfig } from "../types/data";
 import { callAPI } from "./api";
+import "./turntables.scss";
 import {
 	AdminGameData,
 	CurrentPhase,
@@ -75,17 +77,24 @@ function EditableTurnPhase({
 	const formID = "edit-" + phase.id;
 
 	return (
-		<tr className={isCurrent ? "danger" : "warning"}>
-			<th scope="row" style={{ textIndent: "2em", fontWeight: "normal" }}>
+		<tr
+			className={classNames("game-phase", "-editing", {
+				danger: isCurrent,
+				warning: !isCurrent,
+			})}
+		>
+			<th scope="row" className="name">
 				<input
+					className="form-control"
 					disabled={isSaving}
 					form={formID}
 					defaultValue={phase.label}
 					ref={labelRef}
 				/>
 			</th>
-			<td>
+			<td className="length">
 				<input
+					className="form-control"
 					defaultValue={moment
 						.duration(phase.length || 0, "milliseconds")
 						.asMinutes()}
@@ -97,12 +106,8 @@ function EditableTurnPhase({
 					type="number"
 				/>
 			</td>
-			<td>
-				<form
-					id={formID}
-					onSubmit={onSubmit}
-					style={{ display: "flex", justifyContent: "space-between" }}
-				>
+			<td className="controls">
+				<form id={formID} onSubmit={onSubmit}>
 					<button
 						className="btn btn-primary"
 						disabled={isSaving}
@@ -134,67 +139,81 @@ function TurnPhase(props: TurnPhaseProps) {
 	const { isCurrent, phase, dispatch } = props;
 
 	return (
-		<tr className={isCurrent ? "success" : ""}>
-			<th scope="row" style={{ textIndent: "2em", fontWeight: "normal" }}>
+		<tr
+			className={classNames("game-phase", {
+				success: isCurrent,
+			})}
+		>
+			<th scope="row" className="name">
 				{phase.label}
 			</th>
-			<td>
+			<td className="length">
 				{phase.length != null
 					? moment
 							.duration(phase.length || Infinity, "milliseconds")
 							.asMinutes() + " Minutes"
 					: "-"}
 			</td>
-			<td>
-				<div className="btn-group">
-					<button
-						type="button"
-						className="btn btn-primary"
-						onClick={() => setEdit(true)}
-						title="Edit"
-					>
-						<Icon name="edit" />
-					</button>
-					<button
-						type="button"
-						className="btn btn-danger"
-						onClick={() => {
-							callAPI("setPhase", {
-								phaseID: phase.id,
-							});
-						}}
-						title={isCurrent ? "Restart" : "Jump here"}
-					>
-						<Icon name={isCurrent ? "refresh" : "play-circle"} />
-					</button>
-					<button
-						type="button"
-						className="btn btn-default"
-						onClick={async () => {
-							let res = await callAPI("bumpPhase", {
-								phaseID: phase.id,
-								direction: "up",
-							});
-							dispatch({ type: "turnEdit", payload: res });
-						}}
-						title="Move up"
-					>
-						<Icon name="chevron-up" />
-					</button>
-					<button
-						type="button"
-						className="btn btn-default"
-						onClick={async () => {
-							let res = await callAPI("bumpPhase", {
-								phaseID: phase.id,
-								direction: "down",
-							});
-							dispatch({ type: "turnEdit", payload: res });
-						}}
-						title="Move down"
-					>
-						<Icon name="chevron-down" />
-					</button>
+			<td className="controls">
+				<div className="btn-group btn-group-justified">
+					<div className="btn-group">
+						<button
+							type="button"
+							className="btn btn-primary"
+							onClick={() => setEdit(true)}
+							title="Edit"
+						>
+							<Icon name="edit" />
+						</button>
+					</div>
+					<div className="btn-group">
+						<button
+							type="button"
+							className="btn btn-danger"
+							onClick={() => {
+								callAPI("setPhase", {
+									phaseID: phase.id,
+								});
+							}}
+							title={isCurrent ? "Restart" : "Jump here"}
+						>
+							<Icon
+								name={isCurrent ? "refresh" : "play-circle"}
+							/>
+						</button>
+					</div>
+					<div className="btn-group">
+						<button
+							type="button"
+							className="btn btn-default"
+							onClick={async () => {
+								let res = await callAPI("bumpPhase", {
+									phaseID: phase.id,
+									direction: "up",
+								});
+								dispatch({ type: "turnEdit", payload: res });
+							}}
+							title="Move up"
+						>
+							<Icon name="chevron-up" />
+						</button>
+					</div>
+					<div className="btn-group">
+						<button
+							type="button"
+							className="btn btn-default"
+							onClick={async () => {
+								let res = await callAPI("bumpPhase", {
+									phaseID: phase.id,
+									direction: "down",
+								});
+								dispatch({ type: "turnEdit", payload: res });
+							}}
+							title="Move down"
+						>
+							<Icon name="chevron-down" />
+						</button>
+					</div>
 				</div>
 			</td>
 		</tr>
@@ -209,17 +228,13 @@ interface TurnProps {
 }
 function Turn({ currentPhase, dispatch, phases, turn }: TurnProps) {
 	return (
-		<tbody>
-			<tr className="info">
-				<th
-					scope="rowgroup"
-					colSpan={2}
-					style={{ position: "sticky", top: 0 }}
-				>
+		<tbody className="game-turn">
+			<tr className="info heading">
+				<th scope="rowgroup" colSpan={2} className="name">
 					{"Turn "}
 					{turn.label}
 				</th>
-				<td style={{ position: "sticky", top: 0, zIndex: 2 }}>
+				<td className="control">
 					<button
 						className="btn btn-default btn-block btn-xs"
 						type="button"

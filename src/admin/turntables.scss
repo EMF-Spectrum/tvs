@@ -1,0 +1,34 @@
+// This is only vaguely going to follow rscss because tables do not care for
+// your puny standards mortal
+.game-turn {
+	// Remove the double border for repeated tbodys
+	.table tbody + & {
+		border-top: 0;
+	}
+
+	// Chrome does not support position:sticky on trs
+	> .heading > .name,
+	> .heading > .control {
+		position: sticky;
+		top: 0;
+		// Move above button groups
+		z-index: 2;
+	}
+}
+
+.game-phase {
+	> .name {
+		padding-left: 2em;
+		font-weight: normal;
+		vertical-align: middle;
+	}
+
+	> .length {
+		vertical-align: middle;
+	}
+
+	> .controls > form {
+		display: flex;
+		justify-content: space-between;
+	}
+}
