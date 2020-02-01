@@ -10,8 +10,6 @@ export class TurnTracker extends BaseCanvasItem {
 		ctx.textAlign = "center";
 		ctx.textBaseline = "top";
 
-		ctx.translate(PADDING, PADDING);
-
 		const TURN_BOX = 240;
 
 		ctx.strokeStyle = "black";

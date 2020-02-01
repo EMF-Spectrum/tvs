@@ -108,8 +108,8 @@ async function main(): Promise<void> {
 		fps(ctx, ft);
 
 		clock.doRender(ctx, 0, HEIGHT / 2, ft, now);
-		turnTracker.doRender(ctx, 0, 0, ft, now);
-		phaseTracker.doRender(ctx, 0, 0, ft, now);
+		turnTracker.doRender(ctx, 30, 30, ft, now);
+		phaseTracker.doRender(ctx, 300, 85, ft, now);
 		terrorTracker.doRender(ctx, 0, HEIGHT - 100, ft, now);
 		ticker.doRender(ctx, 0, HEIGHT - 100, ft, now);
 

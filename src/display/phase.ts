@@ -4,7 +4,6 @@ import { fontify } from "./fonts";
 
 const LEFT_PADDING = 300;
 const RIGHT_PADDING = 30;
-const TOP_PADDING = 85;
 
 const MAX_WIDTH = WIDTH - LEFT_PADDING - RIGHT_PADDING;
 
@@ -85,7 +84,6 @@ export class PhaseTracker extends BaseCanvasItem {
 		ctx.textAlign = "left";
 		ctx.textBaseline = "top";
 		ctx.font = fontify("160px", 500);
-		ctx.translate(LEFT_PADDING, TOP_PADDING);
 
 		let { width: textWidth } = ctx.measureText(this.cPhase);
 
