@@ -62,6 +62,14 @@ async function main(): Promise<void> {
 
 	let ctx = getCtx();
 
+	ctx.canvas.addEventListener("click", async () => {
+		try {
+			await ctx.canvas.requestFullscreen({ navigationUI: "hide" });
+		} catch (e) {
+			alert(e);
+		}
+	});
+
 	let sockURL = new URL("/socket", window.location.href);
 	sockURL.protocol = "ws";
 	let sock = new Socket(sockURL.href);
