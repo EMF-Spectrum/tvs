@@ -34,6 +34,7 @@ interface StepInfo {
 	text: string;
 	tst: TextSizeThing;
 	fillStyle: string;
+	step: number;
 }
 
 interface Colour {
@@ -61,6 +62,9 @@ export class TerrorTracker extends BaseCanvasItem {
 	private textPanic: TextSizeThing;
 	private gradient: CanvasGradient;
 
+	private steps: StepInfo[] = [];
+	private stepOffset = 0;
+
 	constructor(ctx: CanvasRenderingContext2D) {
 		super(ctx);
 		this.textNormal = createTextSizeThing(ctx, TEXT_SIZE, 400, 25);
@@ -78,25 +82,35 @@ export class TerrorTracker extends BaseCanvasItem {
 		this.gradient.addColorStop(0.15, "rgba(255, 255, 255, 0)");
 		this.gradient.addColorStop(0.85, "rgba(255, 255, 255, 0)");
 		this.gradient.addColorStop(1, "rgba(255, 255, 255, 1)");
+
+		for (let i = 1; i <= MAXIMUM_TERROR; i++) {
+			this.steps.push(this.getStep(i));
+		}
+		this.stage = 1;
 	}
 
-	private _stage = 1;
+	private _stage = -1;
 	get stage(): number {
 		return this._stage;
 	}
 	set stage(stage: number) {
-		if (stage < 0 || stage > MAXIMUM_TERROR) {
+		if (stage < 1 || stage > MAXIMUM_TERROR) {
 			throw new Error("Invalid terror step!");
 		}
+
+		this.stepOffset = this.steps.reduce((offset, step) => {
+			if (step.step > stage) {
+				return offset;
+			} else if (step.step == stage) {
+				return offset - step.width / 2;
+			}
+			return offset - step.width;
+		}, 0);
 
 		this._stage = stage;
 	}
 
-	private getStep(step: number): StepInfo | undefined {
-		if (step <= 0 || step > MAXIMUM_TERROR) {
-			// TODO: "GLOBAL PANIC" final step
-			return undefined;
-		}
+	private getStep(step: number): StepInfo {
 		let tst: TextSizeThing;
 		if (step == MAXIMUM_TERROR) {
 			tst = this.textPanic;
@@ -127,28 +141,27 @@ export class TerrorTracker extends BaseCanvasItem {
 			text,
 			tst,
 			fillStyle,
+			step,
 		};
-	}
-
-	private getDisplayables(): (StepInfo | undefined)[] {
-		// Animation will throw this for a loop but whatever
-		const VISIBLES = 3;
-		let ret = [];
-		for (let i = this.stage - VISIBLES; i <= this.stage + VISIBLES; i++) {
-			ret.push(this.getStep(i));
-		}
-		return ret;
 	}
 
 	private drawStep(
 		ctx: CanvasRenderingContext2D,
 		step: StepInfo,
-		centre: number,
+		offset: number,
 	): number {
-		ctx.font = step.tst.font;
-		ctx.fillStyle = step.fillStyle;
-		ctx.fillText(step.text, centre, 0);
-		return step.width;
+		let res = offset + step.width;
+		if (res > 0 && offset < WIDTH) {
+			ctx.font = step.tst.font;
+			ctx.fillStyle = step.fillStyle;
+			ctx.fillText(step.text, offset + step.width / 2, 0);
+			if (step.step < MAXIMUM_TERROR) {
+				ctx.moveTo(res + 2.5, 0);
+				ctx.lineTo(res + 2.5, -120);
+				ctx.stroke();
+			}
+		}
+		return res;
 	}
 
 	public render(ctx: CanvasRenderingContext2D): void {
@@ -156,47 +169,13 @@ export class TerrorTracker extends BaseCanvasItem {
 		ctx.textBaseline = "bottom";
 
 		let centre = WIDTH / 2;
-
-		let steps = this.getDisplayables();
-
-		// Ha ha ha good fucking luck with your animations
-		let CURRENT_STEP = steps[3];
-		let x: number;
-		let lastWidth: number;
-		x = centre;
-		let firstWidth = this.drawStep(ctx, CURRENT_STEP!, x);
-
+		let offset = centre + this.stepOffset;
 		ctx.beginPath();
 		ctx.strokeStyle = "black";
 		ctx.lineWidth = 10;
 
-		lastWidth = firstWidth;
-		for (let i = 1; i <= 3; i++) {
-			CURRENT_STEP = steps[3 + i];
-			if (!CURRENT_STEP) {
-				break;
-			}
-			x += lastWidth / 2;
-			ctx.moveTo(x + 2.5, 0);
-			ctx.lineTo(x + 2.5, -120);
-			ctx.stroke();
-			x += CURRENT_STEP.width / 2;
-			lastWidth = this.drawStep(ctx, CURRENT_STEP, x);
-		}
-
-		x = centre;
-		lastWidth = firstWidth;
-		for (let i = 1; i <= 3; i++) {
-			CURRENT_STEP = steps[3 - i];
-			if (!CURRENT_STEP) {
-				break;
-			}
-			x -= lastWidth / 2;
-			ctx.moveTo(x - 2.5, 0);
-			ctx.lineTo(x - 2.5, -120);
-			ctx.stroke();
-			x -= CURRENT_STEP.width / 2;
-			lastWidth = this.drawStep(ctx, CURRENT_STEP, x);
+		for (let step of this.steps) {
+			offset = this.drawStep(ctx, step, offset);
 		}
 
 		ctx.fillStyle = this.gradient;
