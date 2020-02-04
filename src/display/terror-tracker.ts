@@ -2,6 +2,7 @@ import { lerp } from "../utils";
 import { BaseCanvasItem } from "./base";
 import { WIDTH } from "./constants";
 import { fontify, OrbitronWeight } from "./fonts";
+import BezierEasing from "bezier-easing";
 
 const TEXT_SIZE = "140px";
 const TEXT_SIZE_BIG = "160px";
@@ -63,7 +64,8 @@ export class TerrorTracker extends BaseCanvasItem {
 	private gradient: CanvasGradient;
 
 	private steps: StepInfo[] = [];
-	private stepOffset = 0;
+
+	private easing = BezierEasing(0.33, -0.15, 0.63, 1.35);
 
 	constructor(ctx: CanvasRenderingContext2D) {
 		super(ctx);
@@ -89,6 +91,10 @@ export class TerrorTracker extends BaseCanvasItem {
 		this.stage = 1;
 	}
 
+	private stepTimer = 0;
+	private stepSpeed = 1;
+	private stepOffset = 0;
+	private targetOffset = NaN;
 	private _stage = -1;
 	get stage(): number {
 		return this._stage;
@@ -96,9 +102,12 @@ export class TerrorTracker extends BaseCanvasItem {
 	set stage(stage: number) {
 		if (stage < 1 || stage > MAXIMUM_TERROR) {
 			throw new Error("Invalid terror step!");
+		} else if (stage == this._stage) {
+			return;
 		}
 
-		this.stepOffset = this.steps.reduce((offset, step) => {
+		// this.stepOffset
+		let targetOffset = this.steps.reduce((offset, step) => {
 			if (step.step > stage) {
 				return offset;
 			} else if (step.step == stage) {
@@ -106,6 +115,15 @@ export class TerrorTracker extends BaseCanvasItem {
 			}
 			return offset - step.width;
 		}, 0);
+
+		if (isNaN(this.targetOffset)) {
+			this.stepOffset = targetOffset;
+			this.targetOffset = targetOffset;
+		} else {
+			this.targetOffset = targetOffset;
+			this.stepTimer = 0;
+			this.stepSpeed = (Math.abs(stage - this._stage) / 125) * 9 + 1;
+		}
 
 		this._stage = stage;
 	}
@@ -164,12 +182,28 @@ export class TerrorTracker extends BaseCanvasItem {
 		return res;
 	}
 
-	public render(ctx: CanvasRenderingContext2D): void {
+	public getOffset(ft: DOMHighResTimeStamp) {
+		if (this.targetOffset == this.stepOffset) {
+			return this.stepOffset;
+		}
+		this.stepTimer += ft / (1000 * this.stepSpeed);
+		if (this.stepTimer >= 1) {
+			this.stepOffset = this.targetOffset;
+			return this.stepOffset;
+		}
+		let gap = this.targetOffset - this.stepOffset;
+		return this.stepOffset + this.easing(this.stepTimer) * gap;
+	}
+
+	public render(
+		ctx: CanvasRenderingContext2D,
+		ft: DOMHighResTimeStamp,
+	): void {
 		ctx.textAlign = "center";
 		ctx.textBaseline = "bottom";
 
 		let centre = WIDTH / 2;
-		let offset = centre + this.stepOffset;
+		let offset = centre + this.getOffset(ft);
 		ctx.beginPath();
 		ctx.strokeStyle = "black";
 		ctx.lineWidth = 10;
