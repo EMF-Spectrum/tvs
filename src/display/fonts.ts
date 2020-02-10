@@ -18,7 +18,10 @@ export function loadFonts(): Promise<void> {
 				reject();
 			},
 			google: {
-				families: [`${FONT}:${EXPECTED_WEIGHTS.join(",")}`],
+				families: [
+					`${FONT}:${EXPECTED_WEIGHTS.join(",")}`,
+					"Roboto+Mono",
+				],
 			},
 		});
 	});

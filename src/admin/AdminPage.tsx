@@ -3,6 +3,7 @@ import { HUD } from "./hud";
 import { TerrorController } from "./terror";
 import { TurnTables } from "./turntables";
 import { useGameData, CurrentTurn, CurrentPhase } from "./useGameData";
+import { HUDTicker } from "./ticker";
 export function AdminPage() {
 	const [game, dispatch] = useGameData();
 
@@ -28,6 +29,7 @@ export function AdminPage() {
 		<>
 			<HUD {...{ timer, currentPhase, currentTurn }} />
 			<TerrorController {...{ terror, currentTurn }} />
+			<HUDTicker />
 			<TurnTables
 				{...{
 					currentPhase,

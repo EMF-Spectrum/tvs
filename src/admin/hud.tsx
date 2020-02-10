@@ -5,6 +5,7 @@ import { callAPI } from "./api";
 import "./hud.scss";
 import { CurrentPhase, CurrentTurn } from "./useGameData";
 import classNames from "classnames";
+import { HUDTicker } from "./ticker";
 
 function getTimerStr(duration: number) {
 	let d = moment.duration(duration);
