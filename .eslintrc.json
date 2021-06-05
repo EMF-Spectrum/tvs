@@ -1,22 +1,11 @@
 {
     "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "project": ["./tsconfig.json", "./jsconfig.webpack.json"],
-        "ecmaVersion": 2019,
-        "sourceType": "module",
-        "ecmaFeatures": {
-            "jsx": true
-        }
-    },
-    "plugins": ["@typescript-eslint", "react", "prettier"],
+    "plugins": ["@typescript-eslint", "react"],
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:react/recommended",
-        "plugin:prettier/recommended",
-        "prettier/@typescript-eslint",
-        "prettier/react"
+        "prettier"
     ],
     "env": {
         "browser": true
@@ -24,10 +13,27 @@
     "rules": {
         "prefer-const": "off",
         "react/jsx-no-literals": "warn",
-        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-unused-vars": [
             "warn",
             { "argsIgnorePattern": "^_" }
         ]
+    },
+    "overrides": [
+        {
+            "files": "**/*.js",
+            "rules": {
+                // js files are not modules
+                "@typescript-eslint/no-var-requires": "off"
+            },
+            "env": {
+                "node": true
+            }
+        }
+    ],
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
     }
 }

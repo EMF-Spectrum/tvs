@@ -1,10 +1,8 @@
-/* eslint-env node */
-/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-/** @type import("webpack").Configuration */
+/** @type {import("webpack").Configuration} */
 module.exports = {
 	entry: {
 		display: "./src/display.ts",
@@ -20,26 +18,18 @@ module.exports = {
 			{
 				test: /\.scss$/,
 				use: [
-					{
-						loader: "style-loader",
-						options: { esModule: true },
-					},
-					{
-						loader: "css-loader",
-						options: { sourceMap: true, esModule: true },
-					},
-					{
-						loader: "sass-loader",
-						options: { sourceMap: true },
-					},
+					// TODO: probs want mini css extract etc
+					"style-loader",
+					"css-loader",
+					"sass-loader",
 				],
 			},
 		],
 	},
 	resolve: {
-		extensions: [".tsx", ".ts", ".js"],
+		extensions: [".tsx", ".ts", `...`],
 		alias: {
-			"@": path.resolve(__dirname, "src"),
+			"@": "src",
 		},
 	},
 	plugins: [
@@ -53,12 +43,19 @@ module.exports = {
 			chunks: ["display"],
 			filename: "display.html",
 		}),
-		new CopyWebpackPlugin(["static/index.html"]),
+		new CopyWebpackPlugin({
+			patterns: ["static/index.html"],
+		}),
 	],
 	mode: "development",
 	devtool: "inline-source-map",
+	optimization: {
+		splitChunks: {
+			chunks: "all",
+		},
+	},
 	output: {
-		filename: "[name].js",
+		clean: true,
 		path: path.resolve(__dirname, "_build"),
 	},
 	devServer: {

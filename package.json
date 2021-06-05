@@ -1,51 +1,57 @@
 {
-  "license": "GPL-3.0",
-  "scripts": {
-    "start": "webpack-dev-server"
-  },
-  "devDependencies": {
-    "@types/classnames": "^2.2.9",
-    "@types/copy-webpack-plugin": "^5.0.0",
-    "@types/d3-ease": "^1.0.9",
-    "@types/html-webpack-plugin": "^3.2.1",
-    "@types/lodash": "^4.14.138",
-    "@types/moment": "^2.13.0",
-    "@types/node": "^12.7.4",
-    "@types/react": "^16.9.2",
-    "@types/react-dom": "^16.9.0",
-    "@types/webfontloader": "^1.6.29",
-    "@types/webpack": "^4.39.1",
-    "@types/webpack-dev-server": "^3.1.7",
-    "@typescript-eslint/eslint-plugin": "^2.1.0",
-    "@typescript-eslint/parser": "^2.1.0",
-    "classnames": "^2.2.6",
-    "copy-webpack-plugin": "^5.0.4",
-    "css-loader": "^3.4.2",
-    "eslint": "^6.3.0",
-    "eslint-config-prettier": "^6.2.0",
-    "eslint-plugin-prettier": "^3.1.0",
-    "eslint-plugin-react": "^7.14.3",
-    "html-loader": "^0.5.5",
-    "html-webpack-plugin": "^3.2.0",
-    "node-sass": "^4.13.1",
-    "prettier": "^1.18.2",
-    "sass-loader": "^8.0.2",
-    "strict-event-emitter-types": "^2.0.0",
-    "style-loader": "^1.1.3",
-    "ts-loader": "^6.0.4",
-    "ts-node": "^8.3.0",
-    "typescript": "^3.6.2",
-    "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.8",
-    "webpack-dev-server": "^3.8.0"
-  },
-  "dependencies": {
-    "bezier-easing": "^2.1.0",
-    "core-decorators": "^0.20.0",
-    "d3-ease": "^1.0.5",
-    "lodash": "^4.17.19",
-    "moment": "^2.24.0",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0"
-  }
+    "name": "emf-spectrum-tv-client",
+    "version": "0.0.2",
+    "description": "TVs & Tablets showing doom as it approaches",
+    "main": "src/display.ts",
+    "dependencies": {
+        "bezier-easing": "^2.1.0",
+        "classnames": "^2.3.1",
+        "core-decorators": "^0.20.0",
+        "d3-ease": "^3.0.0",
+        "lodash": "^4.17.21",
+        "moment": "^2.29.1",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2"
+    },
+    "devDependencies": {
+        "@types/d3-ease": "^2.0.0",
+        "@types/lodash": "^4.14.170",
+        "@types/react": "^17.0.9",
+        "@types/react-dom": "^17.0.6",
+        "@types/webfontloader": "^1.6.32",
+        "@types/webpack": "^5.28.0",
+        "@types/webpack-dev-server": "^3.11.4",
+        "@types/webpack-env": "^1.16.0",
+        "@typescript-eslint/eslint-plugin": "^4.26.0",
+        "@typescript-eslint/parser": "^4.26.0",
+        "copy-webpack-plugin": "^9.0.0",
+        "css-loader": "^5.2.6",
+        "eslint": "^7.28.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-react": "^7.24.0",
+        "html-webpack-plugin": "^5.3.1",
+        "prettier": "^2.3.1",
+        "sass": "^1.34.1",
+        "sass-loader": "^12.0.0",
+        "strict-event-emitter-types": "^2.0.0",
+        "style-loader": "^2.0.0",
+        "ts-loader": "^9.2.2",
+        "typescript": "^4.3.2",
+        "webpack": "^5.38.1",
+        "webpack-cli": "^4.7.0",
+        "webpack-dev-server": "^3.11.2"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "webpack serve"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/EMF-Spectrum/tvs.git"
+    },
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/EMF-Spectrum/tvs/issues"
+    },
+    "homepage": "https://github.com/EMF-Spectrum/tvs#readme"
 }

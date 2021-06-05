@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import StrictEventEmitter from "strict-event-emitter-types";
+import type StrictEventEmitter from "strict-event-emitter-types";
 import { HeartbeatEvent, CurrentPhaseData } from "../types/data";
 import { autobind } from "core-decorators";
 
