@@ -16,7 +16,17 @@ enum Doing {
 const DELETING_SPEED = 50;
 const TYPING_SPEED = 100;
 
-export class PhaseTracker extends BaseCanvasItem {
+export class PhaseTracker extends BaseCanvasItem<string> {
+	constructor(ctx: CanvasRenderingContext2D, lastState?: string) {
+		super(ctx, lastState);
+
+		// bypass any typing
+		if (lastState) {
+			this._phase = lastState;
+			this.cPhase = lastState;
+		}
+	}
+
 	private mode: Doing = Doing.STATIC;
 
 	// constructor(ctx: CanvasRenderingContext2D) {
@@ -46,6 +56,14 @@ export class PhaseTracker extends BaseCanvasItem {
 			this.mode = Doing.OUT;
 		}
 		this._phase = newP;
+	}
+
+	getState() {
+		return this.phase;
+	}
+
+	heartbeat(state: string) {
+		this.phase = state;
 	}
 
 	private doTyping(ft: DOMHighResTimeStamp): void {

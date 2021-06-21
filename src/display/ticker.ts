@@ -2,7 +2,14 @@ import { BaseCanvasItem } from "@/display/base";
 import { WIDTH } from "@/display/constants";
 import { fontify } from "@/display/fonts";
 
-export class Ticker extends BaseCanvasItem {
+export class Ticker extends BaseCanvasItem<undefined> {
+	getState() {
+		return undefined;
+	}
+	heartbeat() {
+		// pass
+	}
+
 	render(ctx: CanvasRenderingContext2D): void {
 		ctx.fillStyle = "black";
 		ctx.fillRect(0, 0, WIDTH, 100);
