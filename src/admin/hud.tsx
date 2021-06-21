@@ -1,11 +1,10 @@
+import { callAPI } from "@/admin/api";
+import "@/admin/hud.scss";
+import { CurrentPhase, CurrentTurn } from "@/admin/useGameData";
+import { TimerStatus } from "@/types/data";
+import classNames from "classnames";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { TimerStatus } from "../types/data";
-import { callAPI } from "./api";
-import "./hud.scss";
-import { CurrentPhase, CurrentTurn } from "./useGameData";
-import classNames from "classnames";
-import { HUDTicker } from "./ticker";
 
 function getTimerStr(duration: number) {
 	let d = moment.duration(duration);

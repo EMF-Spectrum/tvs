@@ -1,7 +1,7 @@
-import { lerp } from "../utils";
-import { BaseCanvasItem } from "./base";
-import { WIDTH } from "./constants";
-import { fontify, OrbitronWeight } from "./fonts";
+import { BaseCanvasItem } from "@/display/base";
+import { WIDTH } from "@/display/constants";
+import { fontify, OrbitronWeight } from "@/display/fonts";
+import { lerp } from "@/utils";
 import BezierEasing from "bezier-easing";
 
 const TEXT_SIZE = "140px";

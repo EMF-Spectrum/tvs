@@ -1,7 +1,7 @@
+import { callAPI } from "@/admin/api";
+import { Socket, SocketEvents } from "@/common/socket";
+import { PhaseConfig, SavedGame, TimerStatus, TurnConfig } from "@/types/data";
 import { Reducer, useEffect, useReducer } from "react";
-import { Socket, SocketEvents } from "../common/socket";
-import { PhaseConfig, SavedGame, TimerStatus, TurnConfig } from "../types/data";
-import { callAPI } from "./api";
 
 export type CurrentTurn = TurnConfig | null;
 export type CurrentPhase = PhaseConfig | null;

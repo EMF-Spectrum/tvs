@@ -1,6 +1,6 @@
-import { BaseCanvasItem } from "./base";
-import { WIDTH } from "./constants";
-import { fontify } from "./fonts";
+import { BaseCanvasItem } from "@/display/base";
+import { WIDTH } from "@/display/constants";
+import { fontify } from "@/display/fonts";
 
 export class Ticker extends BaseCanvasItem {
 	render(ctx: CanvasRenderingContext2D): void {

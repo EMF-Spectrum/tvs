@@ -1,6 +1,6 @@
+import { AdminPage } from "@/admin/AdminPage";
 import React from "react";
 import ReactDOM from "react-dom";
-import { AdminPage } from "./admin/AdminPage";
 
 ReactDOM.render(
 	<div className="container">
