@@ -1,15 +1,15 @@
-import classNames from "classnames";
-import moment from "moment";
-import React, { useRef, useState } from "react";
-import { PhaseConfig, SavedGame, TurnConfig } from "../types/data";
-import { callAPI } from "./api";
-import "./turntables.scss";
+import { callAPI } from "@/admin/api";
+import "@/admin/turntables.scss";
 import {
 	AdminGameData,
 	CurrentPhase,
 	CurrentTurn,
-	GameDataDispatch,
-} from "./useGameData";
+	GameDataDispatch
+} from "@/admin/useGameData";
+import { PhaseConfig, SavedGame, TurnConfig } from "@/types/data";
+import classNames from "classnames";
+import moment from "moment";
+import React, { useRef, useState } from "react";
 
 function Icon({ name }: { name: string }) {
 	return (

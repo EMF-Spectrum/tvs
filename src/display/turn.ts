@@ -1,5 +1,5 @@
-import { BaseCanvasItem } from "./base";
-import { fontify } from "./fonts";
+import { BaseCanvasItem } from "@/display/base";
+import { fontify } from "@/display/fonts";
 
 const PADDING = 30;
 

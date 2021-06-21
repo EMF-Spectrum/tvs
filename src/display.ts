@@ -1,12 +1,11 @@
-import { Clock } from "./display/clock";
-import { HEIGHT, WIDTH } from "./display/constants";
-import { loadFonts } from "./display/fonts";
-import { PhaseTracker } from "./display/phase";
-import { TerrorTracker } from "./display/terror-tracker";
-import { Ticker } from "./display/ticker";
-import { TurnTracker } from "./display/turn";
-import { HeartbeatEvent } from "./types/data";
-import { Socket } from "./common/socket";
+import { Socket } from "@/common/socket";
+import { Clock } from "@/display/clock";
+import { HEIGHT, WIDTH } from "@/display/constants";
+import { loadFonts } from "@/display/fonts";
+import { PhaseTracker } from "@/display/phase";
+import { TerrorTracker } from "@/display/terror";
+import { Ticker } from "@/display/ticker";
+import { TurnTracker } from "@/display/turn";
 
 function getCtx(): CanvasRenderingContext2D {
 	let canvas = document.getElementById("root") as HTMLCanvasElement;

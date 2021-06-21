@@ -1,6 +1,5 @@
+import "@/admin/ticker.scss";
 import React from "react";
-
-import "./ticker.scss";
 
 export function HUDTicker() {
 	return (

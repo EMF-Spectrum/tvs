@@ -1,7 +1,7 @@
+import { autobind } from "core-decorators";
 import { EventEmitter } from "events";
 import type StrictEventEmitter from "strict-event-emitter-types";
-import { HeartbeatEvent, CurrentPhaseData } from "../types/data";
-import { autobind } from "core-decorators";
+import { CurrentPhaseData, HeartbeatEvent } from "@/types/data";
 
 export interface SocketEvents {
 	heartbeat: HeartbeatEvent;

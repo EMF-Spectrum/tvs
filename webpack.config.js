@@ -29,7 +29,7 @@ module.exports = {
 	resolve: {
 		extensions: [".tsx", ".ts", `...`],
 		alias: {
-			"@": "src",
+			"@": path.resolve(__dirname, "src"),
 		},
 	},
 	plugins: [

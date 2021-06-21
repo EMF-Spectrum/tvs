@@ -1,6 +1,6 @@
+import { callAPI } from "@/admin/api";
+import { CurrentTurn } from "@/admin/useGameData";
 import React from "react";
-import { callAPI } from "./api";
-import { CurrentTurn } from "./useGameData";
 
 interface TerrorProps {
 	terror: number;

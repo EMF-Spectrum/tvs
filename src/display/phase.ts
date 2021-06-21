@@ -1,6 +1,6 @@
-import { BaseCanvasItem } from "./base";
-import { WIDTH } from "./constants";
-import { fontify } from "./fonts";
+import { BaseCanvasItem } from "@/display/base";
+import { WIDTH } from "@/display/constants";
+import { fontify } from "@/display/fonts";
 
 const LEFT_PADDING = 300;
 const RIGHT_PADDING = 30;

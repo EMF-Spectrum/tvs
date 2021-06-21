@@ -1,9 +1,10 @@
+import { HUD } from "@/admin/hud";
+import { TerrorController } from "@/admin/terror";
+import { HUDTicker } from "@/admin/ticker";
+import { TurnTables } from "@/admin/turntables";
+import { CurrentPhase, CurrentTurn, useGameData } from "@/admin/useGameData";
 import React from "react";
-import { HUD } from "./hud";
-import { TerrorController } from "./terror";
-import { TurnTables } from "./turntables";
-import { useGameData, CurrentTurn, CurrentPhase } from "./useGameData";
-import { HUDTicker } from "./ticker";
+
 export function AdminPage() {
 	const [game, dispatch] = useGameData();
 
