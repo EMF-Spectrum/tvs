@@ -57,7 +57,7 @@ function lerpColour(c1: Colour, c2: Colour, amt: number): Colour {
 	};
 }
 
-export class TerrorTracker extends BaseCanvasItem {
+export class TerrorTracker extends BaseCanvasItem<number> {
 	private textNormal: TextSizeThing;
 	private textBig: TextSizeThing;
 	private textPanic: TextSizeThing;
@@ -67,7 +67,7 @@ export class TerrorTracker extends BaseCanvasItem {
 
 	private easing = BezierEasing(0.33, -0.15, 0.63, 1.35);
 
-	constructor(ctx: CanvasRenderingContext2D) {
+	constructor(ctx: CanvasRenderingContext2D, lastState?: number) {
 		super(ctx);
 		this.textNormal = createTextSizeThing(ctx, TEXT_SIZE, 400, 25);
 		this.textBig = createTextSizeThing(ctx, TEXT_SIZE_BIG, 700, 40);
@@ -88,7 +88,7 @@ export class TerrorTracker extends BaseCanvasItem {
 		for (let i = 1; i <= MAXIMUM_TERROR; i++) {
 			this.steps.push(this.getStep(i));
 		}
-		this.stage = 1;
+		this.stage = lastState ?? 1;
 	}
 
 	private stepTimer = 0;
@@ -126,6 +126,14 @@ export class TerrorTracker extends BaseCanvasItem {
 		}
 
 		this._stage = stage;
+	}
+
+	getState() {
+		return this.stage;
+	}
+
+	heartbeat(state: number) {
+		this.stage = state;
 	}
 
 	private getStep(step: number): StepInfo {

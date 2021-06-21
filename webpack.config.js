@@ -60,6 +60,7 @@ module.exports = {
 	},
 	devServer: {
 		inline: true,
+		hot: true,
 		proxy: {
 			"/socket": {
 				target: "ws://localhost:8081",

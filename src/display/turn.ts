@@ -1,8 +1,22 @@
 import { BaseCanvasItem } from "@/display/base";
 import { fontify } from "@/display/fonts";
 
-export class TurnTracker extends BaseCanvasItem {
-	public turn = 0;
+export class TurnTracker extends BaseCanvasItem<number> {
+	public turn: number;
+
+	constructor(ctx: CanvasRenderingContext2D, lastState?: number) {
+		super(ctx, lastState);
+
+		this.turn = lastState ?? 0;
+	}
+
+	getState() {
+		return this.turn;
+	}
+
+	heartbeat(state: number) {
+		this.turn = state;
+	}
 
 	render(ctx: CanvasRenderingContext2D): void {
 		ctx.textAlign = "center";

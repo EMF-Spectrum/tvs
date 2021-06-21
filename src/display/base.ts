@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-export abstract class BaseCanvasItem {
-	constructor(ctx: CanvasRenderingContext2D) {
+export abstract class BaseCanvasItem<S> {
+	constructor(ctx: CanvasRenderingContext2D, lastState?: S) {
 		// pass
 	}
+
+	abstract getState(): S;
+	abstract heartbeat(state: S): void;
 
 	abstract render(
 		ctx: CanvasRenderingContext2D,

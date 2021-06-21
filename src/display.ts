@@ -1,4 +1,5 @@
 import { Socket } from "@/common/socket";
+import { BaseCanvasItem } from "@/display/base";
 import { Clock } from "@/display/clock";
 import { HEIGHT, WIDTH } from "@/display/constants";
 import { loadFonts } from "@/display/fonts";
@@ -83,18 +84,44 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	let clock = new Clock(ctx);
-	let turnTracker = new TurnTracker(ctx);
-	let phaseTracker = new PhaseTracker(ctx);
-	let terrorTracker = new TerrorTracker(ctx);
-	let ticker = new Ticker(ctx);
+	function makeCanvas<T extends BaseCanvasItem<any>>(
+		Cls: new (...args: any[]) => T,
+		prev?: T,
+	): T {
+		return new Cls(ctx, prev?.getState());
+	}
+
+	let clock = makeCanvas(Clock);
+	let turnTracker = makeCanvas(TurnTracker);
+	let phaseTracker = makeCanvas(PhaseTracker);
+	let terrorTracker = makeCanvas(TerrorTracker);
+	let ticker = makeCanvas(Ticker);
+
+	if (module.hot) {
+		module.hot.accept("@/display/clock", () => {
+			clock = makeCanvas(Clock, clock);
+		});
+		module.hot.accept("@/display/turn", () => {
+			turnTracker = makeCanvas(TurnTracker, turnTracker);
+		});
+		module.hot.accept("@/display/phase", () => {
+			phaseTracker = makeCanvas(PhaseTracker, phaseTracker);
+		});
+		module.hot.accept("@/display/terror", () => {
+			terrorTracker = makeCanvas(TerrorTracker, terrorTracker);
+		});
+		module.hot.accept("@/display/ticker", () => {
+			ticker = makeCanvas(Ticker, ticker);
+		});
+		module.hot.accept(["@/display/constants", "@/display/fonts"]);
+	}
 
 	sock.on("heartbeat", (data) => {
 		let { phase, terror, timer, turn } = data;
-		turnTracker.turn = turn;
-		phaseTracker.phase = phase;
-		terrorTracker.stage = terror;
-		clock.status = timer;
+		turnTracker.heartbeat(turn);
+		phaseTracker.heartbeat(phase);
+		terrorTracker.heartbeat(terror);
+		clock.heartbeat(timer);
 	});
 
 	let last = performance.now();

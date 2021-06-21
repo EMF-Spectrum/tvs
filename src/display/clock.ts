@@ -23,8 +23,8 @@ function digit(num: number, which: number): string {
 	return (Math.floor(num / 10 ** which) % 10).toFixed(0);
 }
 
-export class Clock extends BaseCanvasItem {
-	public status: TimerStatus = { state: "hidden" };
+export class Clock extends BaseCanvasItem<TimerStatus> {
+	public status: TimerStatus;
 
 	private digitWidth: number;
 	private colonWidth: number;
@@ -39,8 +39,10 @@ export class Clock extends BaseCanvasItem {
 		ctx.textBaseline = "middle";
 	}
 
-	constructor(ctx: CanvasRenderingContext2D) {
-		super(ctx);
+	constructor(ctx: CanvasRenderingContext2D, lastState?: TimerStatus) {
+		super(ctx, lastState);
+
+		this.status = lastState ?? { state: "hidden" };
 
 		this.setupText(ctx);
 
@@ -50,6 +52,13 @@ export class Clock extends BaseCanvasItem {
 		this.colonPad = this.colonWidth / 2 + this.digitWidth / 2;
 		this.noMinWidth = this.digitPad * 2 + this.colonPad * 2;
 		this.withMinWidth = this.digitPad * 3 + this.colonPad * 4;
+	}
+
+	getState() {
+		return this.status;
+	}
+	heartbeat(state: TimerStatus) {
+		this.status = state;
 	}
 
 	render(ctx: CanvasRenderingContext2D): void {
