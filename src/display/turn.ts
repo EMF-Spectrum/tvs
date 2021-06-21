@@ -1,8 +1,6 @@
 import { BaseCanvasItem } from "@/display/base";
 import { fontify } from "@/display/fonts";
 
-const PADDING = 30;
-
 export class TurnTracker extends BaseCanvasItem {
 	public turn = 0;
 

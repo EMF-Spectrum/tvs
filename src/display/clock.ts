@@ -52,11 +52,7 @@ export class Clock extends BaseCanvasItem {
 		this.withMinWidth = this.digitPad * 3 + this.colonPad * 4;
 	}
 
-	render(
-		ctx: CanvasRenderingContext2D,
-		ft: DOMHighResTimeStamp,
-		now: DOMHighResTimeStamp,
-	): void {
+	render(ctx: CanvasRenderingContext2D): void {
 		if (this.status.state == "hidden") {
 			return;
 		}
