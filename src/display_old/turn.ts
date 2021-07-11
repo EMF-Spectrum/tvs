@@ -1,8 +1,6 @@
 import { BaseCanvasItem } from "@/display/base";
 import { fontify } from "@/display/fonts";
 
-import "./turn.scss";
-
 export class TurnTracker extends BaseCanvasItem<number> {
 	public turn: number;
 

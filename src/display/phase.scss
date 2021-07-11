@@ -1,0 +1,15 @@
+@use "./sizes";
+
+.phase-tracker {
+	& {
+		text-align: center;
+		font-size: 160px;
+		font-weight: 500;
+		margin: 0;
+
+		line-height: sizes.$header-height;
+		height: sizes.$header-height;
+
+		white-space: nowrap;
+	}
+}

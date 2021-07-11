@@ -2,8 +2,6 @@ import { BaseCanvasItem } from "@/display/base";
 import { WIDTH } from "@/display/constants";
 import { fontify } from "@/display/fonts";
 
-import "./phase.scss";
-
 const LEFT_PADDING = 300;
 const RIGHT_PADDING = 30;
 

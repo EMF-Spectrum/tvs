@@ -4,8 +4,6 @@ import { fontify, OrbitronWeight } from "@/display/fonts";
 import { lerp } from "@/utils";
 import BezierEasing from "bezier-easing";
 
-import "./terror.scss";
-
 const TEXT_SIZE = "140px";
 const TEXT_SIZE_BIG = "160px";
 const MAXIMUM_TERROR = 250;

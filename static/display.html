@@ -5,25 +5,27 @@
 	<meta charset="utf-8" />
 	<title>EMF Spectrum - So good they named it once</title>
 	<meta name="viewport" content="width=1920, user-scalable=no">
-	<style>
-		html,
-		body {
-			padding: 0;
-			margin: 0;
-			height: 100%;
-			overflow: hidden;
-		}
-
-		canvas {
-			background: white;
-		}
-	</style>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"
 		integrity="sha256-4O4pS1SH31ZqrSO2A/2QJTVjTPqVe+jnYgOWUVr7EEc=" crossorigin="anonymous"></script>
 </head>
 
 <body>
-	<canvas id="root" width=1920 height=1080></canvas>
+	<section class="main-page">
+		<header class="header clock-header">
+			<div class="turn turn-tracker">
+				<span class="label">Turn</span>
+				<span class="number">1</span>
+			</div>
+			<h1 class="phase phase-tracker">Action Time</h1>
+		</header>
+		<main class="clock big-clock">
+		</main>
+		<footer class="footer clock-footer">
+			<ol class="tracker terror-tracker"></ol>
+			<div class="terror-fade"></div>
+			<ol class="ticker news-ticker"></ol>
+		</footer>
+	</section>
 </body>
 
 </html>

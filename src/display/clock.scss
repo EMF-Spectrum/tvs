@@ -1,0 +1,19 @@
+canvas {
+	background: white;
+}
+
+.big-clock {
+	& {
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+	}
+
+	> .heck {
+		text-align: center;
+		font-size: 300px;
+		font-weight: 900;
+		font-variant-numeric: tabular-nums;
+		font-feature-settings: "lnum" on, "tnum" on;
+	}
+}

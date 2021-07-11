@@ -6,6 +6,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 module.exports = {
 	entry: {
 		display: "./src/display.ts",
+		display_old: "./src/display_old.ts",
 		admin: "./src/admin.tsx",
 	},
 	module: {
@@ -42,6 +43,11 @@ module.exports = {
 			template: "static/display.html",
 			chunks: ["display"],
 			filename: "display.html",
+		}),
+		new HtmlWebpackPlugin({
+			template: "static/display_old.html",
+			chunks: ["display_old"],
+			filename: "display_old.html",
 		}),
 		new CopyWebpackPlugin({
 			patterns: ["static/index.html"],

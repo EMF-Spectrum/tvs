@@ -3,8 +3,6 @@ import { WIDTH } from "@/display/constants";
 import { fontify } from "@/display/fonts";
 import { TimerStatus } from "@/types/data";
 
-import "./clock.scss";
-
 const COLON_VOFFSET = -20;
 const TOTAL_VOFSET = 35; // Random number to fight with the baseline
 const TEXT_SIZE = "300px";

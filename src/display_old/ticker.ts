@@ -2,7 +2,7 @@ import { BaseCanvasItem } from "@/display/base";
 import { WIDTH } from "@/display/constants";
 import { fontify } from "@/display/fonts";
 
-import "./ticker.scss";
+// wat
 
 const TICKER_TEXT = [
 	"one",
