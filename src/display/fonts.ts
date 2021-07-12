@@ -20,12 +20,30 @@ export function fontify(
 	return `${weight} ${size} ${font}`;
 }
 
-export function loadFonts(): Promise<void> {
+function loadStix(): Promise<void> {
 	return new Promise((resolve, reject): void => {
 		window.WebFont.load({
 			classes: false,
 			active() {
 				resolve();
+			},
+			inactive() {
+				reject();
+			},
+			google: {
+				families: ["STIX Two Math"],
+				text: "⍭",
+			},
+		});
+	});
+}
+
+export function loadFonts(): Promise<void> {
+	return new Promise((resolve, reject): void => {
+		window.WebFont.load({
+			classes: false,
+			active() {
+				resolve(loadStix());
 			},
 			inactive() {
 				reject();
