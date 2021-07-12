@@ -1,11 +1,5 @@
-import { BaseCanvasItem } from "@/display/base";
-import { WIDTH } from "@/display/constants";
-import { fontify } from "@/display/fonts";
-
-const LEFT_PADDING = 300;
-const RIGHT_PADDING = 30;
-
-const MAX_WIDTH = WIDTH - LEFT_PADDING - RIGHT_PADDING;
+import { BaseHTMLItem } from "@/display/base";
+import "./phase.scss";
 
 enum Doing {
 	IN,
@@ -16,12 +10,13 @@ enum Doing {
 const DELETING_SPEED = 50;
 const TYPING_SPEED = 100;
 
-export class PhaseTracker extends BaseCanvasItem<string> {
-	constructor(ctx: CanvasRenderingContext2D, lastState?: string) {
-		super(ctx, lastState);
+export class PhaseTracker extends BaseHTMLItem<string, HTMLHeadingElement> {
+	constructor(el: HTMLHeadingElement, lastState?: string) {
+		super(el, lastState);
 
 		// bypass any typing
 		if (lastState) {
+			this.el.textContent = lastState;
 			this._phase = lastState;
 			this.cPhase = lastState;
 		}
@@ -29,9 +24,6 @@ export class PhaseTracker extends BaseCanvasItem<string> {
 
 	private mode: Doing = Doing.STATIC;
 
-	// constructor(ctx: CanvasRenderingContext2D) {
-	// 	super(ctx);
-	// }
 	private actionTimer = 0;
 	private _phase = "";
 	private cPhase = "";
@@ -92,26 +84,14 @@ export class PhaseTracker extends BaseCanvasItem<string> {
 		}
 	}
 
-	render(ctx: CanvasRenderingContext2D, ft: DOMHighResTimeStamp): void {
-		if (!this._phase && this.mode == Doing.STATIC) {
+	/** @override */
+	think(ft: DOMHighResTimeStamp, _now: DOMHighResTimeStamp): void {
+		if (this.mode == Doing.STATIC) {
 			return;
 		}
 
 		this.doTyping(ft);
 
-		ctx.textAlign = "left";
-		ctx.textBaseline = "top";
-		ctx.font = fontify("160px", 500);
-
-		let { width: textWidth } = ctx.measureText(this.cPhase);
-
-		let left;
-		if (textWidth < MAX_WIDTH) {
-			left = (MAX_WIDTH - textWidth) / 2;
-		} else {
-			left = 0;
-		}
-
-		ctx.fillText(this.cPhase, left, 0, MAX_WIDTH);
+		this.el.textContent = this.cPhase;
 	}
 }

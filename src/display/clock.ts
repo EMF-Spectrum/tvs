@@ -1,7 +1,8 @@
-import { BaseCanvasItem } from "@/display/base";
-import { WIDTH } from "@/display/constants";
+import { BaseHTMLItem } from "@/display/base";
 import { fontify } from "@/display/fonts";
 import { TimerStatus } from "@/types/data";
+import { ContextExclusionPlugin } from "webpack";
+import "./clock.scss";
 
 const COLON_VOFFSET = -20;
 const TOTAL_VOFSET = 35; // Random number to fight with the baseline
@@ -23,7 +24,7 @@ function digit(num: number, which: number): string {
 	return (Math.floor(num / 10 ** which) % 10).toFixed(0);
 }
 
-export class Clock extends BaseCanvasItem<TimerStatus> {
+export class Clock extends BaseHTMLItem<TimerStatus, HTMLCanvasElement> {
 	public status: TimerStatus;
 
 	private digitWidth: number;
@@ -33,21 +34,49 @@ export class Clock extends BaseCanvasItem<TimerStatus> {
 	private withMinWidth: number;
 	private noMinWidth: number;
 
+	private ctx: CanvasRenderingContext2D;
+	private canvasWidth = 0;
+	private canvasHeight = 0;
+
 	private setupText(ctx: CanvasRenderingContext2D): void {
 		ctx.font = fontify(TEXT_SIZE, TEXT_WEIGHT);
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
 	}
 
-	constructor(ctx: CanvasRenderingContext2D, lastState?: TimerStatus) {
-		super(ctx, lastState);
+	private setupCanvas(): CanvasRenderingContext2D {
+		let canvas = this.el;
+		// Get the device pixel ratio, falling back to 1.
+		let dpr = window.devicePixelRatio || 1;
+
+		// Get the size of the canvas in CSS pixels.
+		let rect = canvas.getBoundingClientRect();
+		// Give the canvas pixel dimensions of their CSS
+		// size * the device pixel ratio.
+		canvas.width = rect.width * dpr;
+		canvas.height = rect.height * dpr;
+
+		this.canvasWidth = canvas.width;
+		this.canvasHeight = canvas.height;
+
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		let ctx = canvas.getContext("2d", { alpha: false })!;
+		// let ctx = canvas.getContext("2d")!;
+
+		return ctx;
+	}
+
+	constructor(el: HTMLCanvasElement, lastState?: TimerStatus) {
+		super(el, lastState);
+
+		this.ctx = this.setupCanvas();
 
 		this.status = lastState ?? { state: "hidden" };
 
-		this.setupText(ctx);
+		this.setupText(this.ctx);
 
-		this.digitWidth = ctx.measureText("0").width;
-		this.colonWidth = ctx.measureText(":").width;
+		this.digitWidth = this.ctx.measureText("0").width;
+		this.colonWidth = this.ctx.measureText(":").width;
 		this.digitPad = this.digitWidth;
 		this.colonPad = this.colonWidth / 2 + this.digitWidth / 2;
 		this.noMinWidth = this.digitPad * 2 + this.colonPad * 2;
@@ -61,7 +90,15 @@ export class Clock extends BaseCanvasItem<TimerStatus> {
 		this.status = state;
 	}
 
-	render(ctx: CanvasRenderingContext2D): void {
+	public onWindowResize(_width: number, _height: number) {
+		this.ctx = this.setupCanvas();
+	}
+
+	render(
+		ctx: CanvasRenderingContext2D,
+		ft: DOMHighResTimeStamp,
+		now: DOMHighResTimeStamp,
+	): void {
 		if (this.status.state == "hidden") {
 			return;
 		}
@@ -77,14 +114,17 @@ export class Clock extends BaseCanvasItem<TimerStatus> {
 		let [m, s, ms] = timeBreakdown(display);
 
 		if (m == 0) {
-			ctx.translate((WIDTH - this.noMinWidth) / 2, TOTAL_VOFSET);
+			ctx.translate(
+				(this.canvasWidth - this.noMinWidth) / 2,
+				TOTAL_VOFSET,
+			);
 			ctx.fillStyle = "rgb(200, 0, 0)";
 		} else {
-			ctx.translate((WIDTH - this.withMinWidth) / 2, TOTAL_VOFSET);
+			ctx.translate(
+				(this.canvasWidth - this.withMinWidth) / 2,
+				TOTAL_VOFSET,
+			);
 		}
-
-		// ctx.strokeStyle = "red";
-		// ctx.strokeRect(hoffset - digitWidth / 2, -100, totalWidth, 200);
 
 		let x = 0;
 		if (m != 0) {
@@ -108,9 +148,23 @@ export class Clock extends BaseCanvasItem<TimerStatus> {
 		if (this.status.state == "paused") {
 			ctx.font = "bold 400px 'Comic Sans MS'";
 			ctx.fillStyle = "hotpink";
-			ctx.translate(WIDTH / 2 - 200, 0);
-			ctx.rotate(0.35389);
+			ctx.translate(this.canvasWidth / 2 - 300, 0);
+			ctx.rotate(0.1 * Math.sin(now / 1000));
 			ctx.fillText("PAuSED! ", 0, 0);
 		}
+	}
+
+	think(ft: DOMHighResTimeStamp, now: DOMHighResTimeStamp): void {
+		let ctx = this.ctx;
+
+		ctx.save();
+		ctx.fillStyle = "white";
+		ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+		ctx.restore();
+
+		ctx.save();
+		ctx.translate(0, this.canvasHeight / 2);
+		this.render(ctx, ft, now);
+		ctx.restore();
 	}
 }

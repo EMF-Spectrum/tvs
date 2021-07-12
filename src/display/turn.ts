@@ -1,36 +1,26 @@
-import { BaseCanvasItem } from "@/display/base";
-import { fontify } from "@/display/fonts";
+import { BaseHTMLItem } from "@/display/base";
+import "./turn.scss";
 
-export class TurnTracker extends BaseCanvasItem<number> {
-	public turn: number;
+export class TurnTracker extends BaseHTMLItem<number, HTMLDivElement> {
+	private state: number;
 
-	constructor(ctx: CanvasRenderingContext2D, lastState?: number) {
-		super(ctx, lastState);
+	constructor(el: HTMLDivElement, lastState?: number) {
+		super(el, lastState);
 
-		this.turn = lastState ?? 0;
+		this.state = lastState ?? 0;
 	}
 
 	getState() {
-		return this.turn;
+		return this.state;
 	}
 
 	heartbeat(state: number) {
-		this.turn = state;
-	}
+		this.state = state;
 
-	render(ctx: CanvasRenderingContext2D): void {
-		ctx.textAlign = "center";
-		ctx.textBaseline = "top";
-
-		const TURN_BOX = 240;
-
-		ctx.strokeStyle = "black";
-		ctx.lineWidth = 10;
-		ctx.strokeRect(0, 0, TURN_BOX, TURN_BOX);
-
-		ctx.font = fontify("72px", 500);
-		ctx.fillText("Turn", TURN_BOX / 2, 20);
-		ctx.font = fontify("150px", 700);
-		ctx.fillText(this.turn.toFixed(0), TURN_BOX / 2, 95);
+		// TODO: This should be a nice transition
+		let n = this.el.querySelector<HTMLSpanElement>(".number");
+		if (n) {
+			n.textContent = state.toFixed(0);
+		}
 	}
 }

@@ -1,28 +1,38 @@
-import { BaseCanvasItem } from "@/display/base";
-import { WIDTH } from "@/display/constants";
-import { fontify } from "@/display/fonts";
+import { BaseHTMLItem } from "@/display/base";
+import "./ticker.scss";
 
-export class Ticker extends BaseCanvasItem<undefined> {
+const TICKER_TEXT = [
+	"one",
+	"two",
+	"three",
+	"four",
+	"five",
+	"six",
+	"seven",
+	"eight",
+	"nine",
+	"ten",
+	"eleven",
+];
+
+export class Ticker extends BaseHTMLItem<undefined, HTMLOListElement> {
+	constructor(el: HTMLOListElement) {
+		super(el, undefined);
+
+		el.innerHTML = "";
+
+		for (let txt of TICKER_TEXT) {
+			let li = document.createElement("li");
+			li.textContent = txt;
+			li.classList.add("item");
+			el.appendChild(li);
+		}
+	}
+
 	getState() {
 		return undefined;
 	}
 	heartbeat() {
 		// pass
-	}
-
-	render(ctx: CanvasRenderingContext2D): void {
-		ctx.fillStyle = "black";
-		ctx.fillRect(0, 0, WIDTH, 100);
-
-		ctx.fillStyle = "white";
-		ctx.textAlign = "left";
-		ctx.textBaseline = "bottom";
-		ctx.font = fontify("75px", 400, false);
-
-		ctx.fillText(
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque id lacus purus. Nulla sollicitudin eu libero id tincidunt. Quisque at imperdiet nisl. Maecenas dapibus sagittis tellus in vehicula. Nunc vehicula magna at eros consequat, in dapibus sem lacinia. Aliquam ut nibh turpis. Vivamus vitae dignissim enim, vulputate rutrum libero. Ut eu quam nec mi porttitor venenatis vitae at augue. Sed vehicula in purus vitae aliquam. Sed quis pretium nibh. Nulla facilisi.",
-			-100,
-			90,
-		);
 	}
 }

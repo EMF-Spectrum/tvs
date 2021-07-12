@@ -1,0 +1,15 @@
+canvas {
+	background: white;
+}
+
+.big-clock {
+	& {
+		position: relative;
+	}
+
+	> canvas {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+	}
+}

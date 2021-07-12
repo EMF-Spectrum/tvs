@@ -27,3 +27,22 @@ export abstract class BaseCanvasItem<S> {
 		ctx.restore();
 	}
 }
+
+export abstract class BaseHTMLItem<S, E extends HTMLElement> {
+	el: E;
+
+	constructor(el: E, lastState?: S) {
+		this.el = el;
+	}
+
+	abstract getState(): S;
+	abstract heartbeat(state: S): void;
+
+	think(frameTime: DOMHighResTimeStamp, now: DOMHighResTimeStamp): void {
+		// Do nothing
+	}
+
+	onWindowResize(width: number, height: number): void {
+		// Do nothing
+	}
+}
