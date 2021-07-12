@@ -8,14 +8,8 @@ import React, { useEffect, useState } from "react";
 
 function getTimerStr(duration: number) {
 	let d = moment.duration(duration);
-	let mins = d
-		.minutes()
-		.toString()
-		.padStart(2, "0");
-	let secs = d
-		.seconds()
-		.toString()
-		.padStart(2, "0");
+	let mins = d.minutes().toString().padStart(2, "0");
+	let secs = d.seconds().toString().padStart(2, "0");
 
 	return mins + ":" + secs;
 }
