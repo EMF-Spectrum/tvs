@@ -20,7 +20,9 @@ export class TerrorTracker extends BaseHTMLItem<number, HTMLOListElement> {
 			el.appendChild(tick);
 		}
 
-		this.stage = lastState ?? 1;
+		if (lastState) {
+			this.stage = lastState;
+		}
 	}
 
 	private _stage = -1;
@@ -28,9 +30,20 @@ export class TerrorTracker extends BaseHTMLItem<number, HTMLOListElement> {
 		return this._stage;
 	}
 	set stage(stage: number) {
-		if (stage < 1 || stage > MAXIMUM_TERROR) {
+		if (stage < 0 || stage > MAXIMUM_TERROR) {
 			throw new Error("Invalid terror step!");
 		} else if (stage == this._stage) {
+			return;
+		}
+
+		if (stage == 0) {
+			this.el.classList.remove("-visible");
+			this._stage = stage;
+			return;
+		} else if (this._stage < 1) {
+			this.el.classList.add("-visible");
+			this._stage = stage;
+			this.onWindowResize(window.innerWidth, window.innerHeight);
 			return;
 		}
 
@@ -47,6 +60,10 @@ export class TerrorTracker extends BaseHTMLItem<number, HTMLOListElement> {
 	}
 
 	private calculatePosition(): number {
+		if (this._stage < 1) {
+			return 0;
+		}
+
 		let tick = this.el.querySelector<HTMLLIElement>(
 			"#terror-tick-" + this._stage.toFixed(0),
 		);

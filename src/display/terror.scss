@@ -28,7 +28,13 @@ $colour-250: rgb(255, 0, 0);
 		margin: 0;
 		padding: 0;
 
+		opacity: 0;
+
 		transition: left 20s cubic-bezier(0.33, -0.15, 0.63, 1.35) 0s;
+	}
+
+	&.-visible {
+		opacity: 1;
 	}
 
 	> .tick {
