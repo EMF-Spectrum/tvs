@@ -31,10 +31,6 @@ export interface HeartbeatEvent {
  * Phase Updates
  */
 
-export interface APIPhase {
-	id: string;
-	label: string;
-}
 export interface PhaseUpdateEvent {
 	turn: string;
 	phase: string;
@@ -51,11 +47,9 @@ export interface PhaseConfig {
 	length: number | null;
 }
 
-export interface CurrentPhaseData {
-	id: string;
+export interface CurrentPhaseData extends PhaseConfig {
 	started: DOMTimeStamp;
 	ends: DOMTimeStamp;
-	length: null | number;
 }
 
 export interface TurnConfig {
