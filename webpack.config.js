@@ -37,6 +37,8 @@ module.exports = {
 			template: "static/admin.html",
 			chunks: ["admin"],
 			filename: "admin.html",
+			meta: { foo: "bar" },
+			title: "test",
 		}),
 		new HtmlWebpackPlugin({
 			template: "static/display.html",

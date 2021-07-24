@@ -1,7 +1,5 @@
 import { BaseHTMLItem } from "@/display/base";
-import { fontify } from "@/display/fonts";
 import { TimerStatus } from "@/types/data";
-import { ContextExclusionPlugin } from "webpack";
 import "./clock.scss";
 
 const COLON_VOFFSET = -20;
@@ -39,7 +37,8 @@ export class Clock extends BaseHTMLItem<TimerStatus, HTMLCanvasElement> {
 	private canvasHeight = 0;
 
 	private setupText(ctx: CanvasRenderingContext2D): void {
-		ctx.font = fontify(TEXT_SIZE, TEXT_WEIGHT);
+		// TODO: Nice fallback font? Maybe?
+		ctx.font = "800 300px Orbitron";
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
 	}

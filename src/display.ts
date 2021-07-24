@@ -1,7 +1,6 @@
 import { Socket } from "@/common/socket";
 import { BaseHTMLItem } from "@/display/base";
 import { Clock } from "@/display/clock";
-import { loadFonts } from "@/display/fonts";
 import "@/display/main.scss";
 import { PhaseTracker } from "@/display/phase";
 import { TerrorTracker } from "@/display/terror";
@@ -9,8 +8,6 @@ import { Ticker } from "@/display/ticker";
 import { TurnTracker } from "@/display/turn";
 
 async function main(): Promise<void> {
-	let fontsLoaded = loadFonts();
-
 	document.body.addEventListener("click", async () => {
 		try {
 			await document.body.requestFullscreen({ navigationUI: "hide" });
@@ -23,11 +20,9 @@ async function main(): Promise<void> {
 	sockURL.protocol = "ws";
 	let sock = new Socket(sockURL.href);
 
-	let socketReady = sock.connect();
-
 	try {
 		// TODO: Loading text
-		await Promise.all([fontsLoaded, socketReady]);
+		await sock.connect();
 	} catch (e) {
 		// TODO: Loading error
 		alert(e);
@@ -78,7 +73,6 @@ async function main(): Promise<void> {
 		module.hot.accept("@/display/ticker", () => {
 			ticker = makeHTML(".news-ticker", Ticker, ticker);
 		});
-		module.hot.accept(["@/display/fonts"]);
 	}
 
 	sock.on("heartbeat", (data) => {
