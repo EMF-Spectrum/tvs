@@ -1,3 +1,6 @@
+// Quickfix - this type used to exist and now apparently doesn't.
+export type DOMTimeStamp = number;
+
 /*
  * Heartbeat types
  */
